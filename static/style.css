@@ -2,41 +2,42 @@
    Colours are tokens: change them here and everything follows. */
 
 :root {
-  /* Rosé Pine (main) */
-  --bg: #191724;          /* base */
-  --panel: #1f1d2e;       /* surface */
-  --fg: #e0def4;          /* text */
-  --muted: #908caa;       /* subtle */
-  --line: #403d52;        /* highlight med */
-  --accent: #c4a7e7;      /* iris */
-  --accent-ink: #191724;  /* base */
+  /* Nord base, dusk accents (after the nord-bridge-cities wallpaper):
+     polar night + snow storm for structure, warm aurora hues against cold frost. */
+  --bg: #2e3440;          /* nord0 */
+  --panel: #3b4252;       /* nord1 */
+  --fg: #eceff4;          /* nord6 */
+  --muted: #a7b1c4;       /* between nord4 and nord3 */
+  --line: #4c566a;        /* nord3 */
+  --accent: #b48ead;      /* nord15: the mauve haze */
+  --accent-ink: #2e3440;  /* nord0 */
   /* role colours: each kind of element gets its own accent */
-  --c-title: #ebbcba;     /* rose: panel titles */
-  --c-year: #f6c177;      /* gold: years */
-  --c-link: #9ccfd8;      /* foam: links */
-  --c-prompt: #eb6f92;    /* love: $ prompt */
-  --c-who: #3e8fb0;       /* pine: co-authors */
-  --c-note: #eb6f92;      /* love: notes (forthcoming, supervisors) */
+  --c-title: #e0909f;     /* sky pink (nord11, lightened): panel titles */
+  --c-year: #ebcb8b;      /* nord13: horizon glow, years */
+  --c-link: #88c0d0;      /* nord8: frost, links */
+  --c-prompt: #8fbcbb;    /* nord7: $ prompt */
+  --c-who: #81a1c1;       /* nord9: co-authors */
+  --c-note: #d08770;      /* nord12: notes (forthcoming, supervisors) */
   --mono: "JetBrains Mono", "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
   --measure: 76ch;
 }
 
 @media (prefers-color-scheme: light) {
   :root {
-    /* Rosé Pine Dawn */
-    --bg: #faf4ed;
-    --panel: #fffaf3;
-    --fg: #575279;
-    --muted: #797593;
-    --line: #dfdad9;
-    --accent: #907aa9;
-    --accent-ink: #faf4ed;
-    --c-title: #d7827e;
-    --c-year: #ea9d34;
-    --c-link: #286983;
-    --c-prompt: #b4637a;
-    --c-who: #56949f;
-    --c-note: #b4637a;
+    /* Nord has no official light theme: snow storm base, darkened accents */
+    --bg: #eceff4;
+    --panel: #e5e9f0;
+    --fg: #2e3440;
+    --muted: #4c566a;
+    --line: #d8dee9;
+    --accent: #8f6a8d;
+    --accent-ink: #eceff4;
+    --c-title: #b0495d;
+    --c-year: #9a6f10;
+    --c-link: #4c6f96;
+    --c-prompt: #3d7f7d;
+    --c-who: #5e81ac;
+    --c-note: #b0583a;
   }
 }
 
