@@ -59,8 +59,8 @@ integration to `cintienrico-prog/MyCV` (public). `flake.nix` has it as non-flake
 `static/cv.pdf` from it at site build time. To publish a CV change: Menu → Sync → push to GitHub in Overleaf,
 then `nix flake update cv-src`, commit `flake.lock`, push. Extra LaTeX packages go in `texlive.combine`.
 
-Theme: palettes live in `data/palettes.toml` (12: catppuccin, rose-pine, nord, tokyo-night, everforest, gruvbox,
-kanagawa, dracula, solarized, one, ayu, terminal; each with `dark` + `light`). Pick one with `palette = "…"` and
+Theme: palettes live in `data/palettes.toml` (18: catppuccin, rose-pine, nord, tokyo-night, everforest, gruvbox,
+kanagawa, dracula, solarized, one, ayu, terminal, monokai, github, nightfox, material, zenburn, oxocarbon; each with `dark` + `light`). Pick one with `palette = "…"` and
 optionally force `scheme = "dark"|"light"` (default `auto`) in `config.toml` [extra]. `templates/base.html` generates the CSS
 variables and the favicon (data URI) from it; `static/style.css` holds no colours. Text colours were nudged to WCAG AA
 (4.5:1), so values differ slightly from the official palettes. To add a palette, copy a block in `palettes.toml`.

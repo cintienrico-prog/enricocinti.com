@@ -21,7 +21,8 @@ email = "cinti.enrico@gmail.com"
 
 # Colour palette, one of the names in data/palettes.toml:
 #   catppuccin  rose-pine  nord  tokyo-night  everforest  gruvbox
-#   kanagawa  dracula  solarized  one  ayu  terminal
+#   kanagawa  dracula  solarized  one  ayu  terminal  monokai  github
+#   nightfox  material  zenburn  oxocarbon
 palette = "catppuccin"
 # "auto" follows the visitor's system (dark/light); or force "dark" / "light".
 scheme = "auto"
