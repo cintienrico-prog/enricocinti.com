@@ -32,6 +32,8 @@
           src = pkgs.lib.cleanSource ./.;
           nativeBuildInputs = [ pkgs.zola ];
           buildPhase = ''
+            # zola's load_data builds a TLS client even for local files; the Linux sandbox has no CA store.
+            export SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt
             ${pkgs.lib.optionalString (cv != null) "cp ${cv}/cv.pdf static/cv.pdf"}
             zola build ${pkgs.lib.optionalString (baseUrl != null) "--base-url ${baseUrl}"} --output-dir $out
           '';
