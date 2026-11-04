@@ -25,14 +25,11 @@ photo = ""
 # Links shown in the footer status bar. Order is display order.
 # Delete what you don't want; uncomment what you do.
 links = [
-  { name = "email",    url = "mailto:cinti.enrico@gmail.com" },
-  { name = "linkedin", url = "https://www.linkedin.com/in/enricocinti" },
-  # { name = "orcid",     url = "https://orcid.org/0000-0000-0000-0000" },
-  # { name = "philpapers", url = "https://philpeople.org/profiles/enrico-cinti" },
-  # { name = "scholar",   url = "https://scholar.google.com/citations?user=XXXX" },
-  # { name = "github",    url = "https://github.com/XXXX" },
-  { name = "instagram", url = "https://www.instagram.com/enricocinti/" },
-  { name = "facebook", url = "https://www.facebook.com/enrico.cinti.9" },
+  { name = "email",      url = "mailto:cinti.enrico@gmail.com" },
+  { name = "orcid",      url = "https://orcid.org/0000-0002-7055-6085" },
+  { name = "philpeople", url = "https://philpeople.org/profiles/enrico-cinti" },
+  # { name = "scholar",  url = "https://scholar.google.com/citations?user=XXXX" },
+  # { name = "github",   url = "https://github.com/XXXX" },
 ]
 
 # Top navigation. `key` is the keyboard shortcut.
