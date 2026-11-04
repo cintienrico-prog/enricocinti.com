@@ -1,0 +1,61 @@
+# Teaching shown on /teaching/. Newest first; add an entry by copying a block.
+# `hours` and `note` are optional.
+
+# TODO: check and complete — your current UvA courses and the yearly Bologna
+# lectures since 2022 are not on the old site. The first two entries are a guess
+# at the wording; correct them.
+
+[[course]]
+year = "2026–27"
+title = "Philosophy of Science"
+level = "M.Sc."
+institution = "Institute of Physics, University of Amsterdam"
+
+[[course]]
+year = "2026–27"
+title = "Philosophy of Physics"
+level = "M.Sc."
+institution = "Institute of Physics, University of Amsterdam"
+
+[[course]]
+year = "2023"
+title = "Philosophy of Physics"
+level = "M.A."
+institution = "Institute of Physics, University of Amsterdam"
+
+[[course]]
+year = "2023"
+title = "Philosophy of Science"
+level = "M.A."
+institution = "Institute of Physics, University of Amsterdam"
+
+[[course]]
+year = "2022"
+title = "Philosophical Foundations of Black Hole Physics"
+level = "M.A."
+hours = 12
+institution = "Physics Department, University of Bologna"
+note = "within Prof. Vincenzo Fano's course on Philosophical Foundations of Physics"
+
+[[course]]
+year = "2021"
+title = "Philosophy of Dualities"
+level = "M.A."
+hours = 10
+institution = "Physics Department, University of Bologna"
+note = "within Prof. Vincenzo Fano's course on Philosophical Foundations of Physics"
+
+[[course]]
+year = "2021"
+title = "From Classical to Quantum Logic"
+level = "B.A."
+hours = 10
+institution = "Department of Philosophy, University of Urbino"
+
+[[course]]
+year = "2020"
+title = "Philosophical Foundations of Black Hole Physics"
+level = "M.A."
+hours = 12
+institution = "Physics Department, University of Bologna"
+note = "within Prof. Vincenzo Fano's course on Philosophical Foundations of Physics"

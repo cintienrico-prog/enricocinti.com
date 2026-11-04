@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+{%- set t = load_data(path="data/teaching.toml") -%}
+<section class="panel">
+  <h1 class="panel-title">teaching</h1>
+  <ul class="list">
+  {%- for c in t.course %}
+    <li>
+      <span class="year">{{ c.year }}</span>
+      <span>{{ c.title }}
+        <span class="meta">{{ c.level }}{% if c.hours %}, {{ c.hours }} hrs{% endif %} · {{ c.institution }}{% if c.note %} · {{ c.note }}{% endif %}</span></span>
+    </li>
+  {%- endfor %}
+  </ul>
+</section>
+{% endblock content %}

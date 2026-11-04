@@ -1,0 +1,44 @@
+# Zola configuration. Docs: https://www.getzola.org/documentation/getting-started/configuration/
+base_url = "https://www.enricocinti.com"
+title = "Enrico Cinti"
+description = "Enrico Cinti — philosopher of physics"
+default_language = "en"
+
+compile_sass = false
+minify_html = true
+generate_feeds = false
+build_search_index = false
+
+[markdown]
+smart_punctuation = true
+external_links_target_blank = true
+external_links_no_referrer = true
+
+[extra]
+name = "Enrico Cinti"
+tagline = "philosopher of physics"
+email = "cinti.enrico@gmail.com"
+
+# Set to e.g. "img/photo.jpg" once you put a photo in static/img/.
+photo = ""
+
+# Links shown in the footer status bar. Order is display order.
+# Delete what you don't want; uncomment what you do.
+links = [
+  { name = "email",    url = "mailto:cinti.enrico@gmail.com" },
+  { name = "linkedin", url = "https://www.linkedin.com/in/enricocinti" },
+  # { name = "orcid",     url = "https://orcid.org/0000-0000-0000-0000" },
+  # { name = "philpapers", url = "https://philpeople.org/profiles/enrico-cinti" },
+  # { name = "scholar",   url = "https://scholar.google.com/citations?user=XXXX" },
+  # { name = "github",    url = "https://github.com/XXXX" },
+  { name = "instagram", url = "https://www.instagram.com/enricocinti/" },
+  { name = "facebook", url = "https://www.facebook.com/enrico.cinti.9" },
+]
+
+# Top navigation. `key` is the keyboard shortcut.
+nav = [
+  { key = "h", name = "home",         path = "/" },
+  { key = "a", name = "about",        path = "/about/" },
+  { key = "p", name = "publications", path = "/publications/" },
+  { key = "t", name = "teaching",     path = "/teaching/" },
+]

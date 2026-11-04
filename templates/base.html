@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="{{ config.default_language }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {%- set page_title = config.title -%}
+  {%- if page and page.title -%}{% set page_title = page.title ~ " · " ~ config.title %}
+  {%- elif section and section.title and not section.path == "/" -%}{% set page_title = section.title ~ " · " ~ config.title %}{%- endif %}
+  <title>{{ page_title }}</title>
+  <meta name="description" content="{{ config.description }}">
+  <meta property="og:title" content="{{ page_title }}">
+  <meta property="og:description" content="{{ config.description }}">
+  <meta property="og:type" content="website">
+  <meta name="color-scheme" content="dark light">
+  <link rel="canonical" href="{{ current_url | default(value=config.base_url) }}">
+  <link rel="icon" href="{{ get_url(path='favicon.svg') }}" type="image/svg+xml">
+  <link rel="stylesheet" href="{{ get_url(path='style.css', cachebust=true) }}">
+  <script src="{{ get_url(path='js/keys.js', cachebust=true) }}" defer></script>
+</head>
+<body>
+  <a class="skip" href="#main">skip to content</a>
+
+  <header class="bar">
+    <a class="brand" href="{{ get_url(path='/') }}"><span class="block" aria-hidden="true">▌</span>{{ config.extra.name | lower }}</a>
+    <nav aria-label="main">
+      {%- for item in config.extra.nav %}
+      {%- set active = current_path | default(value="") == item.path %}
+      <a href="{{ get_url(path=item.path) }}" data-key="{{ item.key }}"{% if active %} aria-current="page"{% endif %}><kbd>{{ item.key }}</kbd>{{ item.name }}</a>
+      {%- endfor %}
+    </nav>
+  </header>
+
+  <main id="main">
+    {% block content %}{% endblock content %}
+  </main>
+
+  <footer class="bar status">
+    <span class="hint" aria-hidden="true">{% block hints %}<kbd>h</kbd><kbd>a</kbd><kbd>p</kbd><kbd>t</kbd> navigate{% endblock hints %}</span>
+    <span class="links">
+      {%- for l in config.extra.links %}
+      <a href="{{ l.url }}"{% if not l.url is starting_with("mailto:") %} rel="me noopener"{% endif %}>{{ l.name }}</a>
+      {%- endfor %}
+    </span>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="panel">
+  <h1 class="panel-title">404</h1>
+  <p class="prompt"><span aria-hidden="true">$</span> cd ~/that-page</p>
+  <p class="muted">No such file or directory. <a href="{{ get_url(path='/') }}">Go home</a>.</p>
+</section>
+{% endblock content %}

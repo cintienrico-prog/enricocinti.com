@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="panel">
+  <h1 class="panel-title">{{ page.title }}</h1>
+  {%- if page.slug == "about" and config.extra.photo %}
+  <img class="portrait" src="{{ get_url(path=config.extra.photo) }}" alt="Photo of {{ config.extra.name }}" width="180" height="180">
+  {%- endif %}
+  <div class="prose">{{ page.content | safe }}</div>
+</section>
+{% endblock content %}
