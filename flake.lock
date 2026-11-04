@@ -1,5 +1,21 @@
 {
   "nodes": {
+    "cv-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1793801731,
+        "narHash": "sha256-Z5IbIlFVjL50eMm3dNEWQvGfjJr/z3u89c7ht+xV4Sw=",
+        "owner": "cintienrico-prog",
+        "repo": "MyCV",
+        "rev": "c68b81cc652390c5d4dbdc8fa866712de0fe73a5",
+        "type": "github"
+      },
+      "original": {
+        "owner": "cintienrico-prog",
+        "repo": "MyCV",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1793726008,
@@ -18,6 +34,7 @@
     },
     "root": {
       "inputs": {
+        "cv-src": "cv-src",
         "nixpkgs": "nixpkgs"
       }
     }

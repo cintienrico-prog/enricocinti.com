@@ -2,26 +2,28 @@
    Colours are tokens: change them here and everything follows. */
 
 :root {
-  --bg: #0c0c0c;
-  --panel: #111111;
-  --fg: #e6e3dc;
-  --muted: #8b877e;
-  --line: #2b2925;
-  --accent: #ff6a14;
-  --accent-ink: #0c0c0c;
+  /* Catppuccin Mocha */
+  --bg: #1e1e2e;          /* base */
+  --panel: #181825;       /* mantle */
+  --fg: #cdd6f4;          /* text */
+  --muted: #9399b2;       /* overlay2 */
+  --line: #313244;        /* surface0 */
+  --accent: #cba6f7;      /* mauve */
+  --accent-ink: #11111b;  /* crust */
   --mono: "JetBrains Mono", "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
   --measure: 76ch;
 }
 
 @media (prefers-color-scheme: light) {
   :root {
-    --bg: #f4f1ea;
-    --panel: #fbf9f4;
-    --fg: #1d1b18;
-    --muted: #6d685f;
-    --line: #d8d2c5;
-    --accent: #d94e00;
-    --accent-ink: #fbf9f4;
+    /* Catppuccin Latte */
+    --bg: #eff1f5;
+    --panel: #e6e9ef;
+    --fg: #4c4f69;
+    --muted: #6c6f85;
+    --line: #ccd0da;
+    --accent: #8839ef;
+    --accent-ink: #eff1f5;
   }
 }
 

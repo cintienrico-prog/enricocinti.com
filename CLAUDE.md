@@ -54,8 +54,12 @@ builds `.#preview` (same as `.#site` but `--base-url https://cintienrico-prog.gi
 prototype lives at that github.io URL and does not link to the old site. When ready to go live: do steps 7–9,
 then switch the workflow to `nix build .#site`.
 
-CV: `flake.nix` builds `cv/cv.tex` into `static/cv.pdf` if `cv/cv.tex` exists (texlive scheme-medium + latexmk;
-add packages to the `texlive.combine` if the CV needs more). Otherwise drop a ready-made `static/cv.pdf`.
+CV: LaTeX (moderncv, `main.tex`) is edited on Overleaf (project MyCV) and synced via Overleaf's GitHub
+integration to `cintienrico-prog/MyCV` (public). `flake.nix` has it as non-flake input `cv-src` and builds
+`static/cv.pdf` from it at site build time. To publish a CV change: Menu → Sync → push to GitHub in Overleaf,
+then `nix flake update cv-src`, commit `flake.lock`, push. Extra LaTeX packages go in `texlive.combine`.
+
+Theme: Catppuccin Mocha (dark) / Latte (light), mauve accent, defined as tokens at the top of `static/style.css`.
 
 ## Status (2026-11-04)
 
@@ -74,7 +78,7 @@ To do, in order (steps 1–3 done; content TODOs are Enrico's to fix after the p
    - `content/about.md`: first paragraph guesses his current position — he rewrites it.
    - `data/teaching.toml`: two guessed 2026–27 UvA entries; Bologna years after 2022 missing.
    - `data/publications.bib`: co-author order on multi-author papers is a guess; "Quo Vadis Wheeler-DeWitt Time?" has no DOI.
-   - add `static/cv.pdf` (About links to it); optional photo → `static/img/photo.jpg` + `photo` in `config.toml`.
+   - add CV (About links to `/cv.pdf`, built from MyCV); optional photo → `static/img/photo.jpg` + `photo` in `config.toml`.
    - `config.toml` links: maybe add ORCID / PhilPapers / Scholar, drop Facebook/Instagram.
    - `git add` new files: the flake only sees tracked files.
 5. `gh repo create cintienrico-prog/enricocinti.com --public --source . --push`
