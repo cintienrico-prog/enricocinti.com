@@ -30,7 +30,7 @@ draft only when asked, and keep it plain, not LLM-ish.
   Author lists use "First Last and First Last"; his own name is hidden and the rest shown as "with …".
   The BibTeX parser fails on an `@` anywhere outside entries, including comments.
 - Teaching: `data/teaching.toml`.
-- Hosting: GitHub Pages, deployed by `.github/workflows/deploy.yml` (`nix build .#preview` for now, `.#site` once live,
+- Hosting: GitHub Pages, deployed by `.github/workflows/deploy.yml` (`nix flake check` first, then `nix build .#preview` for now, `.#site` once live,
   `cp -rL result public`, upload-pages-artifact, deploy-pages). Repo must be public.
 - With Actions deploys GitHub ignores `static/CNAME`: the custom domain is set in
   repo Settings → Pages (or `gh api -X PUT repos/cintienrico-prog/enricocinti.com/pages -f cname=www.enricocinti.com`).
@@ -98,7 +98,13 @@ To do, in order (steps 1–3 done; content TODOs are Enrico's to fix after the p
 
 ## Ideas for later
 
-- `.github/workflows`: run `nix flake check` before deploy; add flake `checks` (zola check, bib parse).
 - Font from nixpkgs (e.g. `pkgs.nerd-fonts.terminess-ttf`, which he uses in his terminal) converted to woff2 at build time.
 - CV built from `cv/cv.tex` (flake already supports it).
 - A Claude Code skill "add paper <DOI>": fetch Crossref metadata, write the BibTeX entry, preview, commit.
+
+## Checks
+
+`nix flake check` runs in CI before every deploy (a failure leaves the live site untouched) and works locally:
+`site` (full build incl. CV and BibTeX), `zola-check` (internal links; external skipped, no network in the sandbox),
+`palettes` (every palette has all keys as #rrggbb; `palette`/`scheme` in config.toml are valid). `mkSite` etc. live in
+a `build` helper in `flake.nix`, not in `packages` (only derivations may be there).

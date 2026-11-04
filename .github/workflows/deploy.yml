@@ -20,15 +20,18 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: cachix/install-nix-action@v31
+      - name: Check
+        # site build, zola link check, palette validation (see `checks` in flake.nix)
+        run: nix flake check
       - name: Build
         run: |
           nix build .#preview   # switch to .#site once DNS points here
           # Pages wants a plain directory, not a symlink into the Nix store.
           cp -rL result public
           chmod -R u+w public
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: public
 
@@ -40,4 +43,4 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
