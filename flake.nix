@@ -26,16 +26,22 @@
             }
           else null;
 
-        site = pkgs.stdenvNoCC.mkDerivation {
+        # baseUrl = null uses config.toml's base_url (the real domain).
+        mkSite = baseUrl: pkgs.stdenvNoCC.mkDerivation {
           name = "enricocinti.com";
           src = pkgs.lib.cleanSource ./.;
           nativeBuildInputs = [ pkgs.zola ];
           buildPhase = ''
             ${pkgs.lib.optionalString (cv != null) "cp ${cv}/cv.pdf static/cv.pdf"}
-            zola build --output-dir $out
+            zola build ${pkgs.lib.optionalString (baseUrl != null) "--base-url ${baseUrl}"} --output-dir $out
           '';
           dontInstall = true;
         };
+
+        site = mkSite null;
+        # Prototype on the default GitHub Pages URL, while the real domain
+        # still points at Google Sites.
+        preview = mkSite "https://cintienrico-prog.github.io/enricocinti.com";
 
         default = site;
       });

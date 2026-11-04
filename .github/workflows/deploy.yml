@@ -24,7 +24,7 @@ jobs:
       - uses: cachix/install-nix-action@v31
       - name: Build
         run: |
-          nix build .#site
+          nix build .#preview   # switch to .#site once DNS points here
           # Pages wants a plain directory, not a symlink into the Nix store.
           cp -rL result public
           chmod -R u+w public

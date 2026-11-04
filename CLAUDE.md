@@ -22,11 +22,15 @@ draft only when asked, and keep it plain, not LLM-ish.
 ## Decisions made
 
 - Generator: Zola (single binary, in nixpkgs). Templates are custom, not a Zola theme.
+  nixpkgs-unstable ships Zola 0.23.x, which uses Tera 2: no macros/`import` (use `{% component pub.x(...) %}`
+  in `templates/partials/macros.html`, called as `{{<pub.x arg={v} />}}`), no `filter`/`slice`/`concat` filters
+  (use list comprehensions and `[:n]` slicing), tests take kwargs only. Tera 2 notes:
+  https://github.com/Keats/tera2/blob/master/MIGRATION.md
 - Publications: `data/publications.bib`, loaded with Zola's `load_data(format="bibtex")`.
   Author lists use "First Last and First Last"; his own name is hidden and the rest shown as "with …".
   The BibTeX parser fails on an `@` anywhere outside entries, including comments.
 - Teaching: `data/teaching.toml`.
-- Hosting: GitHub Pages, deployed by `.github/workflows/deploy.yml` (`nix build .#site`,
+- Hosting: GitHub Pages, deployed by `.github/workflows/deploy.yml` (`nix build .#preview` for now, `.#site` once live,
   `cp -rL result public`, upload-pages-artifact, deploy-pages). Repo must be public.
 - With Actions deploys GitHub ignores `static/CNAME`: the custom domain is set in
   repo Settings → Pages (or `gh api -X PUT repos/cintienrico-prog/enricocinti.com/pages -f cname=www.enricocinti.com`).
@@ -43,14 +47,25 @@ draft only when asked, and keep it plain, not LLM-ish.
 - The Blade (NixOS, user `enrico`) is away for repair; set it up later with `sync`, `rebuild`, `projects-sync`, `direnv allow`.
 - Shell is fish. GitHub user: `cintienrico-prog`.
 
+## Prototype phase
+
+The old Google Sites site stays live on www.enricocinti.com; DNS is NOT touched yet. The Actions workflow
+builds `.#preview` (same as `.#site` but `--base-url https://cintienrico-prog.github.io/enricocinti.com`) so the
+prototype lives at that github.io URL and does not link to the old site. When ready to go live: do steps 7–9,
+then switch the workflow to `nix build .#site`.
+
+CV: `flake.nix` builds `cv/cv.tex` into `static/cv.pdf` if `cv/cv.tex` exists (texlive scheme-medium + latexmk;
+add packages to the `texlive.combine` if the CV needs more). Otherwise drop a ready-made `static/cv.pdf`.
+
 ## Status (2026-11-04)
 
 Done:
 - Site scaffolded (this repo), builds with zola; screenshots checked desktop/mobile/light mode.
 - Config patch applied on the Mac and rebuilt (direnv module, projects.list).
-- `gh` added to `modules/vcs/default.nix` — NOT yet rebuilt.
+- `gh` rebuilt, authenticated (SSH); direnv works.
+- Templates ported to Tera 2; `nix build .#site` and `.#preview` pass; `zola serve` checked.
 
-To do, in order:
+To do, in order (steps 1–3 done; content TODOs are Enrico's to fix after the prototype is up):
 1. `rebuild-mba` (picks up `gh`); check `direnv version`, `gh --version`.
 2. `gh auth login` (GitHub.com, SSH protocol, browser login) — interactive, Enrico runs it.
 3. In this repo: `direnv allow`; `nix build .#site` (never tested on a real machine yet:
