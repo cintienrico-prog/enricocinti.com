@@ -59,7 +59,11 @@ integration to `cintienrico-prog/MyCV` (public). `flake.nix` has it as non-flake
 `static/cv.pdf` from it at site build time. To publish a CV change: Menu → Sync → push to GitHub in Overleaf,
 then `nix flake update cv-src`, commit `flake.lock`, push. Extra LaTeX packages go in `texlive.combine`.
 
-Theme: Catppuccin Mocha (dark) / Latte (light), mauve accent, defined as tokens at the top of `static/style.css`.
+Theme: palettes live in `data/palettes.toml` (12: catppuccin, rose-pine, nord, tokyo-night, everforest, gruvbox,
+kanagawa, dracula, solarized, one, ayu, terminal; each with `dark` + `light`). Pick one with `palette = "…"` and
+optionally force `scheme = "dark"|"light"` (default `auto`) in `config.toml` [extra]. `templates/base.html` generates the CSS
+variables and the favicon (data URI) from it; `static/style.css` holds no colours. Text colours were nudged to WCAG AA
+(4.5:1), so values differ slightly from the official palettes. To add a palette, copy a block in `palettes.toml`.
 
 ## Status (2026-11-04)
 
@@ -96,6 +100,5 @@ To do, in order (steps 1–3 done; content TODOs are Enrico's to fix after the p
 
 - `.github/workflows`: run `nix flake check` before deploy; add flake `checks` (zola check, bib parse).
 - Font from nixpkgs (e.g. `pkgs.nerd-fonts.terminess-ttf`, which he uses in his terminal) converted to woff2 at build time.
-- Named colour palettes selectable from `config.toml`.
 - CV built from `cv/cv.tex` (flake already supports it).
 - A Claude Code skill "add paper <DOI>": fetch Crossref metadata, write the BibTeX entry, preview, commit.

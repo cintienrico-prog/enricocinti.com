@@ -19,6 +19,13 @@ name = "Enrico Cinti"
 tagline = "philosopher of physics"
 email = "cinti.enrico@gmail.com"
 
+# Colour palette, one of the names in data/palettes.toml:
+#   catppuccin  rose-pine  nord  tokyo-night  everforest  gruvbox
+#   kanagawa  dracula  solarized  one  ayu  terminal
+palette = "catppuccin"
+# "auto" follows the visitor's system (dark/light); or force "dark" / "light".
+scheme = "auto"
+
 # Set to e.g. "img/photo.jpg" once you put a photo in static/img/.
 photo = ""
 

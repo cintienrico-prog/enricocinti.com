@@ -34,7 +34,7 @@ content/*.md                page text
 data/publications.bib       publications (rendered by templates/publications.html)
 data/teaching.toml          teaching list
 templates/                  HTML templates (Tera)
-static/                     copied as-is: style.css, js/keys.js, favicon, CNAME, cv.pdf, img/
+static/                     copied as-is: style.css, js/keys.js, CNAME, cv.pdf, img/
 flake.nix                   packages.site, packages.cv, devShell, `nix run` preview
 .github/workflows/deploy.yml
 ```

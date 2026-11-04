@@ -1,43 +1,10 @@
 /* enricocinti.com — terminal-ish theme.
-   Colours are tokens: change them here and everything follows. */
+   Colours are NOT defined here: base.html generates the CSS variables (--bg, --fg, --accent, --c-*)
+   from data/palettes.toml, chosen by `palette` in config.toml. */
 
 :root {
-  /* Catppuccin Mocha */
-  --bg: #1e1e2e;          /* base */
-  --panel: #181825;       /* mantle */
-  --fg: #cdd6f4;          /* text */
-  --muted: #9399b2;       /* overlay2 */
-  --line: #313244;        /* surface0 */
-  --accent: #cba6f7;      /* mauve */
-  --accent-ink: #11111b;  /* crust */
-  /* role colours: each kind of element gets its own accent */
-  --c-title: #a6e3a1;     /* green: panel titles */
-  --c-year: #fab387;      /* peach: years */
-  --c-link: #89b4fa;      /* blue: links */
-  --c-prompt: #94e2d5;    /* teal: $ prompt */
-  --c-who: #f5c2e7;       /* pink: co-authors */
-  --c-note: #f9e2af;      /* yellow: notes (forthcoming, supervisors) */
   --mono: "JetBrains Mono", "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
   --measure: 76ch;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    /* Catppuccin Latte */
-    --bg: #eff1f5;
-    --panel: #e6e9ef;
-    --fg: #4c4f69;
-    --muted: #6c6f85;
-    --line: #ccd0da;
-    --accent: #8839ef;
-    --accent-ink: #eff1f5;
-    --c-title: #40a02b;
-    --c-year: #fe640b;
-    --c-link: #1e66f5;
-    --c-prompt: #179299;
-    --c-who: #ea76cb;
-    --c-note: #df8e1d;
-  }
 }
 
 *, *::before, *::after { box-sizing: border-box; }
