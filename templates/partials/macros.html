@@ -26,7 +26,7 @@
     <span class="year">{{ e.tags.year }}</span>
     <span class="what">
       <span class="title">{{ e.tags.title }}</span>
-      <span class="meta">{{<pub.venue entry={e} />}}{% if who %} · {{ who }}{% endif %}{% if e.tags.note %} · <em>{{ e.tags.note }}</em>{% endif %}</span>
+      <span class="meta">{{<pub.venue entry={e} />}}{% if who %} · <span class="who">{{ who }}</span>{% endif %}{% if e.tags.note %} · <em>{{ e.tags.note }}</em>{% endif %}</span>
     </span>
   </summary>
   <div class="body">
