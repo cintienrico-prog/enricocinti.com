@@ -2,41 +2,41 @@
    Colours are tokens: change them here and everything follows. */
 
 :root {
-  /* Tokyo Night (night) */
-  --bg: #1a1b26;
-  --panel: #16161e;
-  --fg: #c0caf5;
-  --muted: #7982a9;       /* lightened from comment #565f89 for contrast */
-  --line: #292e42;
-  --accent: #bb9af7;      /* purple */
-  --accent-ink: #1a1b26;
+  /* Everforest (dark, medium) */
+  --bg: #2d353b;          /* bg0 */
+  --panel: #343f44;       /* bg1 */
+  --fg: #d3c6aa;
+  --muted: #9da9a0;       /* grey2 */
+  --line: #475258;        /* bg3 */
+  --accent: #a7c080;      /* green */
+  --accent-ink: #2d353b;
   /* role colours: each kind of element gets its own accent */
-  --c-title: #7dcfff;     /* cyan: panel titles */
-  --c-year: #ff9e64;      /* orange: years */
-  --c-link: #7aa2f7;      /* blue: links */
-  --c-prompt: #9ece6a;    /* green: $ prompt */
-  --c-who: #73daca;       /* teal: co-authors */
-  --c-note: #e0af68;      /* yellow: notes (forthcoming, supervisors) */
+  --c-title: #e69875;     /* orange: panel titles */
+  --c-year: #dbbc7f;      /* yellow: years */
+  --c-link: #7fbbb3;      /* blue: links */
+  --c-prompt: #83c092;    /* aqua: $ prompt */
+  --c-who: #d699b6;       /* purple: co-authors */
+  --c-note: #e67e80;      /* red: notes (forthcoming, supervisors) */
   --mono: "JetBrains Mono", "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
   --measure: 76ch;
 }
 
 @media (prefers-color-scheme: light) {
   :root {
-    /* Tokyo Night Day */
-    --bg: #e1e2e7;
-    --panel: #e9e9ed;
-    --fg: #3760bf;
-    --muted: #6172b0;
-    --line: #c4c8da;
-    --accent: #9854f1;
-    --accent-ink: #e1e2e7;
-    --c-title: #007197;
-    --c-year: #b15c00;
-    --c-link: #2e7de9;
-    --c-prompt: #587539;
-    --c-who: #118c74;
-    --c-note: #8c6c3e;
+    /* Everforest light, medium; accents darkened for contrast */
+    --bg: #fdf6e3;
+    --panel: #f4f0d9;
+    --fg: #5c6a72;
+    --muted: #6f7a6d;
+    --line: #e0dcc7;
+    --accent: #6e8200;
+    --accent-ink: #fdf6e3;
+    --c-title: #c8611c;
+    --c-year: #9c7400;
+    --c-link: #2f7fa6;
+    --c-prompt: #2c8f68;
+    --c-who: #b64e92;
+    --c-note: #d0393a;
   }
 }
 
