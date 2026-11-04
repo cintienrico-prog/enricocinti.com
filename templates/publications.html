@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% import "partials/macros.html" as m %}
 
 {% block content %}
 {%- set bib = load_data(path="data/publications.bib", format="bibtex") -%}
@@ -9,14 +8,14 @@
   <h1 class="panel-title">articles &amp; chapters</h1>
   <div class="prose muted">{{ page.content | safe }}</div>
   {%- for e in pubs %}{% if e.entry_type == "article" or e.entry_type == "incollection" %}
-  {{ m::entry(e=e) }}
+  {{<pub.entry e={e} />}}
   {%- endif %}{% endfor %}
 </section>
 
 <section class="panel">
   <h2 class="panel-title">books &amp; thesis</h2>
   {%- for e in pubs %}{% if e.entry_type == "book" or e.entry_type == "phdthesis" %}
-  {{ m::entry(e=e) }}
+  {{<pub.entry e={e} />}}
   {%- endif %}{% endfor %}
 </section>
 {% endblock content %}

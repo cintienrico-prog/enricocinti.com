@@ -1,34 +1,32 @@
-{#- Helpers for rendering BibTeX entries loaded from data/publications.bib -#}
+{#- Components for rendering BibTeX entries loaded from data/publications.bib (Tera 2: globally registered) -#}
 
-{% macro coauthors(entry) -%}
-  {%- set others = [] -%}
-  {%- for a in entry.tags.author | default(value="") | split(pat=" and ") -%}
-    {%- if a and not a is containing("Cinti") %}{% set_global others = others | concat(with=a | trim) %}{% endif -%}
-  {%- endfor -%}
+{% component pub.coauthors(entry) -%}
+  {%- set others = [a | trim for a in (entry.tags.author | default(value="") | split(pat=" and ")) if a and not ("Cinti" in a)] -%}
   {%- if others | length > 0 %}with {{ others | join(sep=", ") }}{% endif -%}
-{%- endmacro coauthors %}
+{%- endcomponent pub.coauthors %}
 
-{% macro venue(entry) -%}
+{% component pub.venue(entry) -%}
   {{ entry.tags.journal | default(value=entry.tags.booktitle | default(value=entry.tags.publisher | default(value=entry.tags.school | default(value="")))) }}
-{%- endmacro venue %}
+{%- endcomponent pub.venue %}
 
-{% macro link(entry) -%}
+{% component pub.link(entry) -%}
   {%- if entry.tags.doi %}https://doi.org/{{ entry.tags.doi }}{% elif entry.tags.url %}{{ entry.tags.url }}{% endif -%}
-{%- endmacro link %}
+{%- endcomponent pub.link %}
 
-{% macro kind(entry) -%}
+{% component pub.kind(entry) -%}
   {%- if entry.entry_type == "phdthesis" %}phd thesis{% elif entry.entry_type == "book" %}book{% elif entry.entry_type == "incollection" %}chapter{% else %}article{% endif -%}
-{%- endmacro kind %}
+{%- endcomponent pub.kind %}
 
 {#- Full entry with collapsible abstract -#}
-{% macro entry(e) -%}
-{%- set url = self::link(entry=e) -%}
+{% component pub.entry(e) -%}
+{%- set url %}{{<pub.link entry={e} />}}{% endset -%}
+{%- set who %}{{<pub.coauthors entry={e} />}}{% endset -%}
 <details class="pub" id="{{ e.citation_key }}">
   <summary>
     <span class="year">{{ e.tags.year }}</span>
     <span class="what">
       <span class="title">{{ e.tags.title }}</span>
-      <span class="meta">{{ self::venue(entry=e) }}{% set w = self::coauthors(entry=e) %}{% if w %} · {{ w }}{% endif %}{% if e.tags.note %} · <em>{{ e.tags.note }}</em>{% endif %}</span>
+      <span class="meta">{{<pub.venue entry={e} />}}{% if who %} · {{ who }}{% endif %}{% if e.tags.note %} · <em>{{ e.tags.note }}</em>{% endif %}</span>
     </span>
   </summary>
   <div class="body">
@@ -36,8 +34,8 @@
     <p class="actions">
       {%- if url %}<a href="{{ url }}">{% if e.tags.doi %}doi:{{ e.tags.doi }}{% else %}link{% endif %}</a>{% endif %}
       {%- if e.tags.isbn %}<span>isbn {{ e.tags.isbn }}</span>{% endif %}
-      <span class="kind">{{ self::kind(entry=e) }}</span>
+      <span class="kind">{{<pub.kind entry={e} />}}</span>
     </p>
   </div>
 </details>
-{%- endmacro entry %}
+{%- endcomponent pub.entry %}

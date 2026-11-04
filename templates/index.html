@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% import "partials/macros.html" as m %}
 
 {% block content %}
 {%- set bib = load_data(path="data/publications.bib", format="bibtex") -%}
@@ -15,12 +14,12 @@
 <section class="panel">
   <h2 class="panel-title">recent</h2>
   <ul class="list">
-  {%- for e in pubs | filter(attribute="entry_type", value="article") | slice(end=4) %}
-    {%- set url = m::link(entry=e) %}
+  {%- for e in [p for p in pubs if p.entry_type == "article"][:4] %}
+    {%- set url %}{{<pub.link entry={e} />}}{% endset %}
     <li>
       <span class="year">{{ e.tags.year }}</span>
       <span>{% if url %}<a href="{{ url }}">{{ e.tags.title }}</a>{% else %}{{ e.tags.title }}{% endif %}
-        <span class="meta">{{ m::venue(entry=e) }}</span></span>
+        <span class="meta">{{<pub.venue entry={e} />}}</span></span>
     </li>
   {%- endfor %}
   </ul>
