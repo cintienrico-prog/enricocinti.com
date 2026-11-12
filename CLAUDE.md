@@ -35,9 +35,13 @@ draft only when asked, and keep it plain, not LLM-ish.
 - With Actions deploys GitHub ignores `static/CNAME`: the custom domain is set in
   repo Settings → Pages (or `gh api -X PUT repos/cintienrico-prog/enricocinti.com/pages -f cname=www.enricocinti.com`).
 - Domain: stays at Namecheap for now (~$14.78/yr renewal). Moving to Cloudflare (~$9/yr) is optional, later.
-- Self-hosting on a VPS: not now. Possible later by adding this flake as an input to a NixOS server and serving `packages.site` with Caddy.
+- VPS (netcup, under test from Nov 2026): `~/nixos` has this flake as input `website` and serves a tailnet-only
+  preview at `https://vps.<tailnet>:8444/` with Caddy (`modules/website.nix` there), built with
+  `legacyPackages.<system>.mkSite "<preview URL>"`. `mkSite null` = `packages.site`. Keep `mkSite` exported.
+  The public site moves to the VPS only if the VPS is kept; until then Google Sites stays live, and GitHub Pages
+  is the fallback if the new site has to go public before that.
 - Kept as its own flake, not inside his system config. His config (`~/nixos`, jj + git)
-  only provides direnv/nix-direnv (`modules/direnv.nix`), `gh` (`modules/vcs`), and lists
+  only provides direnv/nix-direnv (`modules/direnv.nix`), `gh` (`modules/shell`), and lists
   this repo in `modules/shell/dotfiles/projects.list` so `projects-sync`/`projects-save` cover it.
   Note: `projects-save` pushes to `main`, which deploys.
 
@@ -45,7 +49,9 @@ draft only when asked, and keep it plain, not LLM-ish.
 
 - enrico-mba: M1 MacBook Air, nix-darwin, user `enricocinti`, rebuild with `rebuild-mba`. Currently the only machine available.
 - The Blade (NixOS, user `enrico`) is away for repair; set it up later with `sync`, `rebuild`, `projects-sync`, `direnv allow`.
-- Shell is fish. GitHub user: `cintienrico-prog`.
+- Shell is nushell (bash as login shell). GitHub user: `cintienrico-prog`.
+- `projects-save [names…] -m "msg"` commits and syncs (fetch, forward/rebase, push); `projects-sync [names…]`
+  without committing. This repo is plain git, not jj.
 
 ## Prototype phase
 
@@ -57,7 +63,7 @@ then switch the workflow to `nix build .#site`.
 CV: LaTeX (moderncv, `main.tex`) is edited on Overleaf (project MyCV) and synced via Overleaf's GitHub
 integration to `cintienrico-prog/MyCV` (public). `flake.nix` has it as non-flake input `cv-src` and builds
 `static/cv.pdf` from it at site build time. To publish a CV change: Menu → Sync → push to GitHub in Overleaf,
-then `nix flake update cv-src`, commit `flake.lock`, push. Extra LaTeX packages go in `texlive.combine`.
+then `nix flake update cv-src`, commit `flake.lock`, push. Extra LaTeX packages go in `texliveMedium.withPackages` (texlive.combine is deprecated).
 
 Theme: palettes live in `data/palettes.toml` (18: catppuccin, rose-pine, nord, tokyo-night, everforest, gruvbox,
 kanagawa, dracula, solarized, one, ayu, terminal, monokai, github, nightfox, material, zenburn, oxocarbon; each with `dark` + `light`). Pick one with `palette = "…"` and
@@ -65,7 +71,7 @@ optionally force `scheme = "dark"|"light"` (default `auto`) in `config.toml` [ex
 variables and the favicon (data URI) from it; `static/style.css` holds no colours. Text colours were nudged to WCAG AA
 (4.5:1), so values differ slightly from the official palettes. To add a palette, copy a block in `palettes.toml`.
 
-## Status (2026-11-04)
+## Status (2026-11-04, updated 2026-11-11)
 
 Done:
 - Site scaffolded (this repo), builds with zola; screenshots checked desktop/mobile/light mode.
@@ -73,7 +79,8 @@ Done:
 - `gh` rebuilt, authenticated (SSH); direnv works.
 - Templates ported to Tera 2; `nix build .#site` and `.#preview` pass; `zola serve` checked.
 
-To do, in order (steps 1–3 done; content TODOs are Enrico's to fix after the prototype is up):
+To do, in order (steps 1–3, 5 and 6 done as of 2026-11-11: repo public, Pages on, github.io prototype deploying;
+content TODOs are Enrico's to fix):
 1. `rebuild-mba` (picks up `gh`); check `direnv version`, `gh --version`.
 2. `gh auth login` (GitHub.com, SSH protocol, browser login) — interactive, Enrico runs it.
 3. In this repo: `direnv allow`; `nix build .#site` (never tested on a real machine yet:

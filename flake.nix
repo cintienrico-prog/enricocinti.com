@@ -19,7 +19,7 @@
           cv = pkgs.stdenvNoCC.mkDerivation {
             name = "cv";
             src = cv-src;
-            nativeBuildInputs = [ (pkgs.texlive.combine { inherit (pkgs.texlive) scheme-medium latexmk moderncv; }) ];
+            nativeBuildInputs = [ (pkgs.texliveMedium.withPackages (ps: [ ps.latexmk ps.moderncv ])) ];
             buildPhase = ''
               export HOME=$TMPDIR
               latexmk -pdf -interaction=nonstopmode main.tex
@@ -44,7 +44,7 @@
           };
         in
         {
-          inherit cv zolaEnv;
+          inherit cv zolaEnv mkSite;
           site = mkSite null;
           # Prototype on the default GitHub Pages URL, while the real domain
           # still points at Google Sites.
@@ -107,6 +107,13 @@
             else "printf 'invalid palette data:\\n%s\\n' '${lib.concatStringsSep "\n" problems}'; exit 1"
           );
         });
+
+      # mkSite for other flakes: `legacyPackages.<system>.mkSite "<base URL>"`
+      # builds the site for another address (the VPS preview in ~/nixos);
+      # `mkSite null` is the same as packages.site.
+      legacyPackages = forAllSystems (pkgs: {
+        inherit (build pkgs) mkSite;
+      });
 
       devShells = forAllSystems (pkgs: {
         default = pkgs.mkShell { packages = [ pkgs.zola ]; };
