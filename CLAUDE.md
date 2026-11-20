@@ -31,7 +31,8 @@ draft only when asked, and keep it plain, not LLM-ish.
   The BibTeX parser fails on an `@` anywhere outside entries, including comments.
 - Teaching: `data/teaching.toml`.
 - Hosting: GitHub Pages, deployed by `.github/workflows/deploy.yml` (`nix flake check` first, then `nix build .#preview` for now, `.#site` once live,
-  `cp -rL result public`, upload-pages-artifact, deploy-pages). Repo must be public.
+  `cp -rL result public`, upload-pages-artifact, deploy-pages). Repo must be public. `origin` is Forgejo on the VPS
+  (`enrico/enricocinti.com`); GitHub gets every push through Forgejo's push mirror, which triggers the workflow.
 - With Actions deploys GitHub ignores `static/CNAME`: the custom domain is set in
   repo Settings → Pages (or `gh api -X PUT repos/cintienrico-prog/enricocinti.com/pages -f cname=www.enricocinti.com`).
 - Domain: stays at Namecheap for now (~$14.78/yr renewal). Moving to Cloudflare (~$9/yr) is optional, later.
@@ -60,10 +61,13 @@ builds `.#preview` (same as `.#site` but `--base-url https://cintienrico-prog.gi
 prototype lives at that github.io URL and does not link to the old site. When ready to go live: do steps 7–9,
 then switch the workflow to `nix build .#site`.
 
-CV: LaTeX (moderncv, `main.tex`) is edited on Overleaf (project MyCV) and synced via Overleaf's GitHub
-integration to `cintienrico-prog/MyCV` (public). `flake.nix` has it as non-flake input `cv-src` and builds
-`static/cv.pdf` from it at site build time. To publish a CV change: Menu → Sync → push to GitHub in Overleaf,
-then `nix flake update cv-src`, commit `flake.lock`, push. Extra LaTeX packages go in `texliveMedium.withPackages` (texlive.combine is deprecated).
+CV: LaTeX (moderncv, `main.tex`) is edited on Overleaf (project MyCV) or in `~/Projects/MyCV`. Since
+2026-11-20 the VPS syncs Overleaf ↔ Forgejo (`enrico/MyCV`, `modules/overleaf-sync.nix` in ~/nixos) and Forgejo
+push-mirrors it to `cintienrico-prog/MyCV` (public); Overleaf's own GitHub integration is no longer used.
+`flake.nix` has the GitHub mirror as non-flake input `cv-src` (reachable from CI, unlike Forgejo, which is
+tailnet-only) and builds `static/cv.pdf` from it at site build time. To publish a CV change: edit in Overleaf
+(reaches GitHub within ~10 minutes) or `projects-save MyCV -m "…"` (seconds), then `nix flake update cv-src`,
+commit `flake.lock`, push. Extra LaTeX packages go in `texliveMedium.withPackages` (texlive.combine is deprecated).
 
 Theme: palettes live in `data/palettes.toml` (18: catppuccin, rose-pine, nord, tokyo-night, everforest, gruvbox,
 kanagawa, dracula, solarized, one, ayu, terminal, monokai, github, nightfox, material, zenburn, oxocarbon; each with `dark` + `light`). Pick one with `palette = "…"` and
@@ -71,7 +75,7 @@ optionally force `scheme = "dark"|"light"` (default `auto`) in `config.toml` [ex
 variables and the favicon (data URI) from it; `static/style.css` holds no colours. Text colours were nudged to WCAG AA
 (4.5:1), so values differ slightly from the official palettes. To add a palette, copy a block in `palettes.toml`.
 
-## Status (2026-11-04, updated 2026-11-11)
+## Status (2026-11-04, updated 2026-11-20)
 
 Done:
 - Site scaffolded (this repo), builds with zola; screenshots checked desktop/mobile/light mode.
