@@ -175,10 +175,12 @@
       # builds the site for another address (the VPS preview in ~/nixos);
       # `mkSite null` is the same as packages.site.
       # stagitTheme: style.css, logo, favicon and font for the git pages on the VPS
-      # (stagit/theme.nix), in the site's palette.
+      # and ndgTheme, one stylesheet for the docs
+      # there (~/nixos modules/docs.nix); both in the site's palette (themes/).
       legacyPackages = forAllSystems (pkgs: {
         inherit (build pkgs) mkSite;
-        stagitTheme = import ./stagit/theme.nix { inherit pkgs; root = ./.; };
+        stagitTheme = import ./themes/stagit.nix { inherit pkgs; root = ./.; };
+        ndgTheme = import ./themes/ndg.nix { inherit pkgs; root = ./.; };
       });
 
       devShells = forAllSystems (pkgs: {

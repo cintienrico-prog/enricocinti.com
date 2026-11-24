@@ -5,12 +5,9 @@
 { pkgs, root }:
 let
   inherit (pkgs) lib;
-  config = builtins.fromTOML (builtins.readFile (root + "/config.toml"));
-  palettes = builtins.fromTOML (builtins.readFile (root + "/data/palettes.toml"));
-  pal = palettes.${config.extra.palette};
-  vars = scheme: lib.concatStrings (lib.mapAttrsToList (k: v: "--${k}:${v};") pal.${scheme});
+  inherit (import ./palette.nix { inherit lib root; }) vars;
   cssText = ''
-    /* stagit pages in the style of enricocinti.com (stagit/theme.nix there) */
+    /* stagit pages in the style of enricocinti.com (themes/stagit.nix there) */
     @font-face { font-family: "JetBrains Mono"; font-weight: 400; font-display: swap;
       src: url("fonts/jetbrains-mono-latin-400-normal.woff2") format("woff2"); }
     @font-face { font-family: "JetBrains Mono"; font-weight: 700; font-display: swap;

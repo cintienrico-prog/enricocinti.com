@@ -38,10 +38,13 @@ draft only when asked, and keep it plain, not LLM-ish.
 - Paper pages (`papers/README.md`): LaTeX → HTML with make4ht (`papers/render.sh`; `prepare.lua` rewrites what
   TeX4ht's MathML can't take, `paper.cfg`, `paper.mk4`); the test paper `papers/example` has one of each case; `templates/paper.html`; unpublished drafts only under gitignored `papers/local/` and
   `content/papers/*.local.md`.
-- Git pages on the VPS (stagit) use this site's look: `legacyPackages.<system>.stagitTheme` (`stagit/theme.nix`:
+- Git pages on the VPS (stagit) use this site's look: `legacyPackages.<system>.stagitTheme` (`themes/stagit.nix`, palette via `themes/palette.nix`:
   CSS from the palette in config.toml, `static/img/mark.svg` as logo/favicon, the font); ~/nixos `modules/git.nix`
   copies it next to the pages. A palette change reaches them after `nix flake update website` + deploy there.
-- Hosting: GitHub Pages, deployed by `.github/workflows/deploy.yml` (`nix flake check` first, then `nix build .#preview` for now, `.#site` once live,
+- Docs of ~/nixos on the VPS (ndg, `modules/docs.nix` there) use `legacyPackages.<system>.ndgTheme` (`themes/ndg.nix`):
+  one CSS file passed with `ndg html -s`, mapping ndg's variables onto the palette, fonts embedded as base64.
+- Paper pages put the contents column on the left (`.doc.paper` in style.css).
+- Hosting: GitHub Pages, deployed by `.github/workflows/deploy.yml` (`nix flake check` first, then `nix build .#site` (`.#preview` until 2026-11-24, when the domain moved here),
   `cp -rL result public`, upload-pages-artifact, deploy-pages). Repo must be public. `origin` is a bare repo on the VPS
   (`git@vps.tail8acc21.ts.net:enricocinti.com.git`); GitHub gets every push through the VPS's mirror push
   (`modules/git.nix` in ~/nixos), which triggers the workflow.
@@ -66,7 +69,7 @@ draft only when asked, and keep it plain, not LLM-ish.
 - `projects-save [names…] -m "msg"` commits and syncs (fetch, forward/rebase, push); `projects-sync [names…]`
   without committing. This repo is plain git, not jj.
 
-## Prototype phase
+## Prototype phase (ended 2026-11-24: DNS points to GitHub Pages, workflow builds `.#site`)
 
 The old Google Sites site stays live on www.enricocinti.com; DNS is NOT touched yet. The Actions workflow
 builds `.#preview` (same as `.#site` but `--base-url https://cintienrico-prog.github.io/enricocinti.com`) so the

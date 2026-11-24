@@ -452,3 +452,10 @@ html { scroll-behavior: smooth; }
 :is(.lede, .prose, .intro) p:hover em::before, :is(.lede, .prose, .intro) p:hover em::after { content: "*"; }
 :is(.lede, .prose, .intro) p:hover strong::before, :is(.lede, .prose, .intro) p:hover strong::after { content: "**"; }
 .status .copy { text-transform: none; letter-spacing: .02em; color: color-mix(in srgb, var(--muted) 75%, var(--bg)); }
+
+/* paper pages: contents on the left, like a file tree */
+.doc.paper { grid-template-columns: 220px minmax(0, 1fr); }
+.doc.paper > .outline { grid-column: 1; grid-row: 1; padding: 0 16px 0 0; border-left: 0; border-right: 1px solid var(--line); }
+.doc.paper > .doc-body { grid-column: 2; grid-row: 1; }
+.doc.paper > .outline a.active::before { left: auto; right: -19px; }
+@media (max-width: 860px) { .doc.paper { grid-template-columns: minmax(0, 1fr); } .doc.paper > .doc-body { grid-column: 1; } .doc.paper > .outline { display: none; } }
