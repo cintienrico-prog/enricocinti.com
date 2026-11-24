@@ -10,8 +10,7 @@
   outputs = { self, nixpkgs, cv-src }:
     let
       # Papers rendered as pages on the site (papers/README.md): name → directory with
-      # main.tex and its .bib files, or { src = …; renderer = "pandoc"; } for a paper
-      # make4ht cannot handle. The name is the folder the page loads
+      # main.tex and its .bib files. The name is the folder the page loads
       # (`paper = "…"` in content/papers/<page>.md). A paper kept in its own repo becomes a
       # non-flake input here, like cv-src.
       papers = {
@@ -47,35 +46,32 @@
             done
           '';
 
-          # TeX for the papers: make4ht/tex4ht for the HTML, latexmk for the PDF, plus
-          # packages papers here use that scheme-medium lacks.
+          # TeX for the papers: make4ht/tex4ht for the HTML, latexmk for the PDF, and
+          # beyond scheme-medium the two collections papers draw on most (latexextra:
+          # csquotes, authblk, footmisc, …; mathscience: braket, physics, …), plus bbm.
+          # A paper needing something else: add it here.
           paperTex = pkgs.texliveMedium.withPackages (ps: with ps; [
-            latexmk make4ht tex4ht luaxml biber biblatex bbm bbm-macros braket
+            latexmk make4ht tex4ht luaxml biber biblatex bbm bbm-macros
+            collection-latexextra collection-mathscience
           ]);
-          # One paper: HTML pieces from papers/render.sh (make4ht), or render-pandoc.sh for a
-          # paper listed with renderer = "pandoc", and the PDF (latexmk).
-          renderPaper = name: spec:
-            let
-              src = spec.src or spec;
-              script = if (spec.renderer or "make4ht") == "pandoc" then "render-pandoc.sh" else "render.sh";
-            in
-            pkgs.stdenvNoCC.mkDerivation {
-              name = "paper-${name}";
-              inherit src;
-              nativeBuildInputs = [ paperTex pkgs.pandoc ];
-              buildPhase = ''
-                export HOME=$TMPDIR
-                bash ${./papers}/${script} . html
-                latexmk -pdf -interaction=nonstopmode main.tex
-              '';
-              installPhase = ''
-                mkdir -p $out
-                cp -r html $out/html
-                cp main.pdf $out/paper.pdf
-              '';
-            };
+          # One paper: HTML pieces from papers/render.sh (make4ht), and the PDF (latexmk).
+          renderPaper = name: src: pkgs.stdenvNoCC.mkDerivation {
+            name = "paper-${name}";
+            inherit src;
+            nativeBuildInputs = [ paperTex ];
+            buildPhase = ''
+              export HOME=$TMPDIR
+              bash ${./papers}/render.sh . html
+              latexmk -pdf -interaction=nonstopmode main.tex
+            '';
+            installPhase = ''
+              mkdir -p $out
+              cp -r html $out/html
+              cp main.pdf $out/paper.pdf
+            '';
+          };
           renderedPapers = pkgs.linkFarm "papers"
-            (pkgs.lib.mapAttrsToList (name: spec: { inherit name; path = renderPaper name spec; }) papers);
+            (pkgs.lib.mapAttrsToList (name: src: { inherit name; path = renderPaper name src; }) papers);
           # Puts each paper's HTML where paper.html loads it, and its PDF under /papers/.
           # Both places are gitignored.
           installPapers = ''
@@ -186,7 +182,7 @@
       });
 
       devShells = forAllSystems (pkgs: {
-        default = pkgs.mkShell { packages = [ pkgs.zola pkgs.pandoc (build pkgs).paperTex ]; };
+        default = pkgs.mkShell { packages = [ pkgs.zola (build pkgs).paperTex ]; };
       });
 
       # `nix run` → live-reloading preview at http://127.0.0.1:1111, drafts included, with

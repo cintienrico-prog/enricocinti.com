@@ -14,7 +14,7 @@ It replaces a Google Sites site at www.enricocinti.com. Goals he set:
   poteto.github.io/noodle: near-black `void` palette, JetBrains Mono, faint dot grid, large two-tone headings,
   uppercase section labels over hairlines, framed lists, accent buttons, recent articles as cards). Own touches so it
   is not a clone: `ember` palette (void with an orange accent), a Penrose diagram of Minkowski spacetime beside the
-  hero (`templates/partials/penrose.html`, generated), a diamond logo/favicon, and § numbers on section labels;
+  hero (`templates/partials/penrose.html`, generated), an "ec" monogram as logo and favicon, and § numbers on section labels;
 - keep the old functionality: home, about + CV, publications with abstracts, teaching, contact links.
 
 He is fluent in Nix (NixOS + nix-darwin, hjem, flakes) but new to web hosting.
@@ -35,8 +35,8 @@ draft only when asked, and keep it plain, not LLM-ish.
   MyCV, push, then `nix flake update cv-src`. Zola loads the .bib with `load_data(format="bibtex")`:
   author lists "First Last and First Last", his own name hidden, the rest shown as "(joint work with …)";
   the BibTeX parser fails on an `@` anywhere outside entries, including comments.
-- Paper pages (`papers/README.md`): LaTeX → HTML with make4ht (`papers/render.sh`, `paper.cfg`, `paper.mk4`),
-  pandoc as fallback; `templates/paper.html`; unpublished drafts only under gitignored `papers/local/` and
+- Paper pages (`papers/README.md`): LaTeX → HTML with make4ht (`papers/render.sh`; `prepare.lua` rewrites what
+  TeX4ht's MathML can't take, `paper.cfg`, `paper.mk4`); the test paper `papers/example` has one of each case; `templates/paper.html`; unpublished drafts only under gitignored `papers/local/` and
   `content/papers/*.local.md`.
 - Git pages on the VPS (stagit) use this site's look: `legacyPackages.<system>.stagitTheme` (`stagit/theme.nix`:
   CSS from the palette in config.toml, `static/img/mark.svg` as logo/favicon, the font); ~/nixos `modules/git.nix`

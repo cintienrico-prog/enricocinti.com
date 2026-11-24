@@ -69,9 +69,10 @@ kbd { font: inherit; color: var(--accent); font-weight: 700; margin-right: .6ch;
   text-decoration: none !important;
 }
 .brand { display: inline-flex; align-items: center; gap: 1ch; }
-.mark { width: 15px; height: 15px; fill: none; stroke-width: 1.6; }
-.mark path:first-child { stroke: var(--accent); }
-.mark path:last-child { stroke: var(--fg); }
+/* the "ec" monogram, as in the favicon */
+.mark { width: 22px; height: 18px; }
+.mark .ec { fill: var(--fg); }
+.mark .bar { fill: var(--accent); }
 nav { display: flex; flex-wrap: wrap; gap: 4px 26px; font-size: 14px; }
 nav a { color: var(--muted); }
 nav a:hover { color: var(--fg); text-decoration: none; }
@@ -371,7 +372,6 @@ html { scroll-behavior: smooth; }
 
 .paper-body { max-width: var(--measure); color: var(--text); font-size: 15.5px; line-height: 1.85; }
 .paper-body p { margin: 0 0 1.1em; text-align: justify; hyphens: auto; -webkit-hyphens: auto; }
-.paper-body section { scroll-margin-top: 24px; }
 .paper-body h2, .paper-body h3, .paper-body h4 { color: var(--fg); line-height: 1.35; }
 .paper-body h2 { margin: 56px 0 18px; padding-bottom: 12px; border-bottom: 1px solid var(--line); font-size: 19px; }
 .paper-body h3 { margin: 36px 0 12px; font-size: 16.5px; }
@@ -386,28 +386,23 @@ html { scroll-behavior: smooth; }
 /* maths: MathML, drawn by the browser */
 .paper-body math { font-size: 1.08em; }
 .paper-body math[display="block"] { margin: .9em 0; overflow-x: auto; overflow-y: hidden; padding: 2px 0; }
-.paper-body span.equation { display: flex; align-items: center; gap: 2ch; scroll-margin-top: 24px; }
-.paper-body span.equation math { flex: 1; }
-/* make4ht: numbered equations are a table, the number in td.eq-no; eqnarray rows
-   carry their numbers in the last MathML column */
+/* numbered equations: a table with the number in td.eq-no; align rows carry
+   theirs in the last MathML column */
 .paper-body table.equation, .paper-body table.equation-star { width: 100%; border: 0; margin: .9em 0; font-size: inherit; }
 .paper-body table.equation td, .paper-body table.equation-star td { border: 0; padding: 0; }
 .paper-body table.equation td > p:empty { display: none; }
 .paper-body td.eq-no { width: 4ch; text-align: right; color: var(--muted); white-space: nowrap; }
-.paper-body mtd.eqnarray-4, .paper-body mtd.align-even + mtd:last-child { color: var(--muted); }
+.paper-body mtd.align-label { color: var(--muted); }
 .paper-body :target { scroll-margin-top: 24px; }
-.paper-body .eqno { color: var(--muted); white-space: nowrap; }
-.paper-body .equation:target { background: var(--tint); }
 
 /* theorem-like environments (\newtheorem): a framed block with the accent on the left */
-.paper-body :is(.newtheorem, .proof, .theorem, .definition, .proposition, .lemma, .corollary, .remark, .example) {
+.paper-body :is(.newtheorem, .proof) {
   margin: 1.4em 0;
   padding: 14px 20px 2px;
   border: 1px solid var(--line);
   border-left: 2px solid var(--accent);
   background: var(--panel);
 }
-.paper-body :is(.theorem, .definition, .proposition, .lemma, .corollary, .remark, .example, .proof) > p > strong:first-child,
 .paper-body .newtheorem .head strong { color: var(--accent); font-weight: 700; }
 .paper-body .newtheorem p { margin-bottom: .8em; }
 
@@ -420,30 +415,19 @@ html { scroll-behavior: smooth; }
 .paper-body th { background: var(--surface); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
 
 /* citations, references, footnotes */
-.paper-body .citation a { text-decoration: none; }
-.paper-body #refs, .paper-body .thebibliography { font-size: 14px; color: var(--muted); }
+.paper-body .thebibliography { font-size: 14px; color: var(--muted); }
 .paper-body .thebibliography .bibitem { padding-left: 2em; text-indent: -2em; margin: 0 0 .8em; text-align: left; }
 .paper-body .thebibliography .bibsp { display: none; }
 .paper-body .bibitem:has(:target) { color: var(--fg); }
-/* make4ht footnotes: a div.footnotes at the end, marks in span.footnote-mark */
+/* footnotes: a div.footnotes at the end, marks in span.footnote-mark */
 .paper-body div.footnotes { margin-top: 56px; padding-top: 20px; border-top: 1px solid var(--line); font-size: 14px; color: var(--muted); }
 .paper-body div.footnotes p { text-align: left; margin: 0 0 .6em; }
 .paper-body .footnote-mark a { text-decoration: none; }
 .paper-body .footnote-mark sup { color: var(--accent); font-size: .75em; }
 .paper-body div.footnotes p:has(:target) { color: var(--fg); }
 .paper-body blockquote.quote { color: var(--text); }
-.paper-body .csl-entry { padding-left: 2em; text-indent: -2em; margin: 0 0 .8em; text-align: left; }
-.paper-body .csl-entry:target { color: var(--fg); }
-.paper-body .footnote-ref { text-decoration: none; }
-.paper-body .footnote-ref sup { color: var(--accent); font-size: .75em; }
-.paper-body .footnotes { margin-top: 56px; font-size: 14px; color: var(--muted); }
-.paper-body .footnotes hr { border: 0; border-top: 1px solid var(--line); margin: 0 0 20px; }
-.paper-body .footnotes ol { padding-left: 2.5ch; }
-.paper-body .footnotes li { margin: 0 0 .6em; }
-.paper-body .footnotes li:target { color: var(--fg); }
-.paper-body .footnote-back { text-decoration: none; margin-left: .5ch; }
 
-/* the paper's contents column: pandoc's nested lists */
+/* the paper's contents column: nested lists from paper.mk4 */
 .toc ul { list-style: none; margin: 0; padding: 0; }
 .toc ul ul { padding-left: 1.6ch; }
 .toc a { font-size: 12.5px; padding: 4px 0; line-height: 1.45; }

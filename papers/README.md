@@ -8,24 +8,25 @@ same source.
 How it works:
 
 - `render.sh` turns a source directory (`main.tex` plus its `.bib` files) into three
-  HTML pieces: `body.html`, `toc.html`, `abstract.html`. It runs make4ht (TeX4ht),
-  which typesets the paper with TeX itself, so the paper's macros, equation numbers,
-  theorem environments and citation style come out as in the PDF. Equations are
-  MathML, drawn by the browser, so the page needs no JavaScript for them.
+  HTML pieces: `body.html`, `toc.html`, `abstract.html`, and keeps `make4ht.log` and
+  `latex.log` next to them. It runs make4ht (TeX4ht), which typesets the paper with
+  TeX itself, so the paper's macros, equation numbers, theorem environments and
+  citation style come out as in the PDF. Equations are MathML, drawn by the browser,
+  so the page needs no JavaScript for them. It works on a copy of the source; the
+  paper and its PDF are never changed.
+  - `prepare.lua` (Lua, run with TeX's own `texlua`) rewrites what TeX4ht's MathML
+    can't take: environment shorthands (`\beq` → `\begin{eqnarray}`), `eqnarray` →
+    `align`, braces for bare macros as accents or scripts (`\hat\cA`, `\sigma^\Psi`),
+    and preamble macros containing `_` (re-read once TeX4ht is on, otherwise
+    `\GN` → `G_{\tn N}` loses its subscript).
   - `paper.cfg` holds TeX4ht settings for the HTML run only: font sizes and old-style
-    switches (`{\cal A}`, `\tiny`) are neutralised, and preamble macros containing `_`
-    are read again once TeX4ht is active (otherwise `\GN` → `G_{\tn N}` loses its
-    subscript).
+    switches (`{\cal A}`, `\tiny`, `\mbox` in subscripts) are neutralised.
   - `paper.mk4` is the build file: LaTeX, BibTeX or Biber, LaTeX twice, then a filter
     that drops the title block, turns font classes into `<em>`/`<strong>`, swaps
     MathML `mathvariant` for Unicode letters (browsers ignore it, so `\mathcal{A}`
     would show as a plain A), numbers the headings and splits out the abstract and
     the contents.
-- `render-pandoc.sh` is the fallback for a paper make4ht cannot handle: same output,
-  but pandoc parses the LaTeX itself (with `math.lua` and `equations.lua` to cover
-  what it misses: old-style font macros, equation numbers). Select it in `flake.nix`
-  with `my-paper = { src = …; renderer = "pandoc"; };`.
-- `flake.nix` runs the renderer for every entry in `papers`, builds the PDF with
+- `flake.nix` runs `render.sh` for every entry in `papers`, builds the PDF with
   latexmk, and copies the pieces to `data/papers/<name>/` and the PDF to
   `static/papers/<name>.pdf` before zola runs (both gitignored). LaTeX packages a
   paper needs beyond scheme-medium go in `paperTex` there.
@@ -78,13 +79,14 @@ after changing the source.
 
 `example/` is a test document with what papers usually contain. Its page
 (`content/papers/example.md`) is a draft: `nix run` shows it at `/papers/example/`,
-the published site leaves it out. Check it after changing `render.sh`, the template
-or the CSS.
+the published site leaves it out. It contains one of each construct `prepare.lua`
+and `paper.cfg` handle; check it after changing them, the template or the CSS.
 
 ## Limits
 
 - make4ht needs the paper to compile with TeX4ht; a package it has no support
-  for may come out plain or fail. `render.sh` prints the end of the log on failure;
-  try `render-pandoc.sh` for such a paper.
-- Only one-line preamble macros are re-read for subscripts (see paper.cfg).
+  for may come out plain or fail. Read `latex.log` in the output folder; a construct
+  that compiles in LaTeX but not here usually needs one more rule in `prepare.lua`
+  (and a line in the test paper).
+- Only one-line preamble macros are re-read for subscripts (see prepare.lua).
 - TikZ pictures and other drawings come out as images, not text.

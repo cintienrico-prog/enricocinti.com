@@ -1,6 +1,7 @@
 % A test document for the paper pages (papers/README.md). Not a real paper:
-% it exercises what papers usually contain, so changes to render.sh, the
-% template or the CSS can be checked against it.
+% it exercises what papers usually contain, plus one of each construct that
+% prepare.lua and paper.cfg exist for (marked "test:"), so changes there, to the
+% template or to the CSS can be checked against it.
 \documentclass[11pt]{article}
 \usepackage{amsmath,amssymb,amsthm}
 \usepackage{natbib}
@@ -10,6 +11,12 @@
 \newtheorem{proposition}{Proposition}
 \newcommand{\Alg}{\mathcal{A}}
 \newcommand{\Hilb}{\mathcal{H}}
+% test: physics-style macros, as in older papers
+\newcommand{\tn}[1]{\mbox{\tiny #1}}
+\newcommand{\GN}{G_{\tn N}}       % a _ inside a preamble macro
+\newcommand{\cB}{{\cal B}}        % old-style font switch
+\newcommand{\beq}{\begin{eqnarray}}  % environment shorthands
+\newcommand{\eeq}{\end{eqnarray}}
 
 \title{Rendering Test: A Paper as a Web Page}
 \author{Enrico Cinti}
@@ -62,6 +69,14 @@ implies $a = 0$.
 If $\Omega \in \Hilb$ is cyclic and separating for $\Alg$, the vector state
 $\omega(a) = \langle \Omega, a\,\Omega \rangle$ is faithful.
 \end{proposition}
+
+Older notation comes through as well: Newton's constant $\GN$, an
+algebra $\cB$, and an \texttt{eqnarray} written with shorthands, with an
+accent and a superscript on bare macros,
+\beq\label{eq:crossed}
+\hat\Alg \;=\; \Alg \rtimes_{\sigma^\Omega} \mathbb{R}~,
+\eeq
+referred to as Equation~\eqref{eq:crossed}.
 
 Aligned equations render as well:
 \begin{align}
