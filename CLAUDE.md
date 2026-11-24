@@ -10,8 +10,11 @@ It replaces a Google Sites site at www.enricocinti.com. Goals he set:
 
 - off Google Sites, managed as plain files in git;
 - built with Nix; free hosting;
-- terminal-style design (references: bashbunni.dev, terminal.shop and its
-  "sold out" screen: dark, monospace, orange accent, TUI-like panels);
+- terminal-style design (first references: bashbunni.dev, terminal.shop; since 2026-11-23 restyled after
+  poteto.github.io/noodle: near-black `void` palette, JetBrains Mono, faint dot grid, large two-tone headings,
+  uppercase section labels over hairlines, framed lists, accent buttons, recent articles as cards). Own touches so it
+  is not a clone: `ember` palette (void with an orange accent), a Penrose diagram of Minkowski spacetime beside the
+  hero (`templates/partials/penrose.html`, generated), a diamond logo/favicon, and § numbers on section labels;
 - keep the old functionality: home, about + CV, publications with abstracts, teaching, contact links.
 
 He is fluent in Nix (NixOS + nix-darwin, hjem, flakes) but new to web hosting.
@@ -26,13 +29,22 @@ draft only when asked, and keep it plain, not LLM-ish.
   in `templates/partials/macros.html`, called as `{{<pub.x arg={v} />}}`), no `filter`/`slice`/`concat` filters
   (use list comprehensions and `[:n]` slicing), tests take kwargs only. Tera 2 notes:
   https://github.com/Keats/tera2/blob/master/MIGRATION.md
-- Publications: `data/publications.bib`, loaded with Zola's `load_data(format="bibtex")`.
-  Author lists use "First Last and First Last"; his own name is hidden and the rest shown as "with …".
-  The BibTeX parser fails on an `@` anywhere outside entries, including comments.
-- Teaching: `data/teaching.toml`.
+- Data shared with the CV (since 2026-11-24): `publications.bib`, `teaching.csv`, `supervision.csv` live in
+  MyCV's `data/` folder (its README); the CV prints them (MyCV `cv-data.tex`: biblatex + datatool) and
+  `flake.nix` (`installCvData`) copies them into `data/` here before zola runs (gitignored). Edit them in
+  MyCV, push, then `nix flake update cv-src`. Zola loads the .bib with `load_data(format="bibtex")`:
+  author lists "First Last and First Last", his own name hidden, the rest shown as "(joint work with …)";
+  the BibTeX parser fails on an `@` anywhere outside entries, including comments.
+- Paper pages (`papers/README.md`): LaTeX → HTML with make4ht (`papers/render.sh`, `paper.cfg`, `paper.mk4`),
+  pandoc as fallback; `templates/paper.html`; unpublished drafts only under gitignored `papers/local/` and
+  `content/papers/*.local.md`.
+- Git pages on the VPS (stagit) use this site's look: `legacyPackages.<system>.stagitTheme` (`stagit/theme.nix`:
+  CSS from the palette in config.toml, `static/img/mark.svg` as logo/favicon, the font); ~/nixos `modules/git.nix`
+  copies it next to the pages. A palette change reaches them after `nix flake update website` + deploy there.
 - Hosting: GitHub Pages, deployed by `.github/workflows/deploy.yml` (`nix flake check` first, then `nix build .#preview` for now, `.#site` once live,
-  `cp -rL result public`, upload-pages-artifact, deploy-pages). Repo must be public. `origin` is Forgejo on the VPS
-  (`enrico/enricocinti.com`); GitHub gets every push through Forgejo's push mirror, which triggers the workflow.
+  `cp -rL result public`, upload-pages-artifact, deploy-pages). Repo must be public. `origin` is a bare repo on the VPS
+  (`git@vps.tail8acc21.ts.net:enricocinti.com.git`); GitHub gets every push through the VPS's mirror push
+  (`modules/git.nix` in ~/nixos), which triggers the workflow.
 - With Actions deploys GitHub ignores `static/CNAME`: the custom domain is set in
   repo Settings → Pages (or `gh api -X PUT repos/cintienrico-prog/enricocinti.com/pages -f cname=www.enricocinti.com`).
 - Domain: stays at Namecheap for now (~$14.78/yr renewal). Moving to Cloudflare (~$9/yr) is optional, later.
@@ -62,18 +74,20 @@ prototype lives at that github.io URL and does not link to the old site. When re
 then switch the workflow to `nix build .#site`.
 
 CV: LaTeX (moderncv, `main.tex`) is edited on Overleaf (project MyCV) or in `~/Projects/MyCV`. Since
-2026-11-20 the VPS syncs Overleaf ↔ Forgejo (`enrico/MyCV`, `modules/overleaf-sync.nix` in ~/nixos) and Forgejo
-push-mirrors it to `cintienrico-prog/MyCV` (public); Overleaf's own GitHub integration is no longer used.
-`flake.nix` has the GitHub mirror as non-flake input `cv-src` (reachable from CI, unlike Forgejo, which is
+2026-11-20 the VPS syncs Overleaf ↔ its repo (`MyCV`, `modules/overleaf-sync.nix` in ~/nixos), which is
+mirrored to `cintienrico-prog/MyCV` (public) after each push; Overleaf's own GitHub integration is no longer used.
+`flake.nix` has the GitHub mirror as non-flake input `cv-src` (reachable from CI, unlike the VPS, which is
 tailnet-only) and builds `static/cv.pdf` from it at site build time. To publish a CV change: edit in Overleaf
 (reaches GitHub within ~10 minutes) or `projects-save MyCV -m "…"` (seconds), then `nix flake update cv-src`,
 commit `flake.lock`, push. Extra LaTeX packages go in `texliveMedium.withPackages` (texlive.combine is deprecated).
 
-Theme: palettes live in `data/palettes.toml` (18: catppuccin, rose-pine, nord, tokyo-night, everforest, gruvbox,
-kanagawa, dracula, solarized, one, ayu, terminal, monokai, github, nightfox, material, zenburn, oxocarbon; each with `dark` + `light`). Pick one with `palette = "…"` and
+Theme: palettes live in `data/palettes.toml` (20: catppuccin, rose-pine, nord, tokyo-night, everforest, gruvbox,
+kanagawa, dracula, solarized, one, ayu, terminal, monokai, github, nightfox, material, zenburn, oxocarbon, void, ember; each with `dark` + `light`). Pick one with `palette = "…"` and
 optionally force `scheme = "dark"|"light"` (default `auto`) in `config.toml` [extra]. `templates/base.html` generates the CSS
 variables and the favicon (data URI) from it; `static/style.css` holds no colours. Text colours were nudged to WCAG AA
 (4.5:1), so values differ slightly from the official palettes. To add a palette, copy a block in `palettes.toml`.
+About-page photo: `photo` and `photo_style` = "greyscale"|"duotone"|"plain" in config.toml [extra]; the tints are an SVG gradient
+map (page.html) between palette colours set per scheme in base.html, so they follow the palette. `nix flake check` validates `photo_style`.
 
 ## Status (2026-11-04, updated 2026-11-20)
 
@@ -109,7 +123,8 @@ content TODOs are Enrico's to fix):
 
 ## Ideas for later
 
-- Font from nixpkgs (e.g. `pkgs.nerd-fonts.terminess-ttf`, which he uses in his terminal) converted to woff2 at build time.
+- Font: JetBrains Mono woff2 (latin subset, from @fontsource) is committed in `static/fonts/` with its OFL licence;
+  could instead come from nixpkgs at build time.
 - CV built from `cv/cv.tex` (flake already supports it).
 - A Claude Code skill "add paper <DOI>": fetch Crossref metadata, write the BibTeX entry, preview, commit.
 

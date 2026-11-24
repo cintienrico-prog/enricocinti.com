@@ -1,8 +1,9 @@
 {#- Components for rendering BibTeX entries loaded from data/publications.bib (Tera 2: globally registered) -#}
 
+{#- "joint work with A, B and C", as on the CV; my own name is left out -#}
 {% component pub.coauthors(entry) -%}
   {%- set others = [a | trim for a in (entry.tags.author | default(value="") | split(pat=" and ")) if a and not ("Cinti" in a)] -%}
-  {%- if others | length > 0 %}with {{ others | join(sep=", ") }}{% endif -%}
+  {%- if others | length > 0 %}joint work with {% for a in others %}{% if not loop.first %}{% if loop.last %} and {% else %}, {% endif %}{% endif %}{{ a }}{% endfor %}{% endif -%}
 {%- endcomponent pub.coauthors %}
 
 {% component pub.venue(entry) -%}
@@ -14,7 +15,7 @@
 {%- endcomponent pub.link %}
 
 {% component pub.kind(entry) -%}
-  {%- if entry.entry_type == "phdthesis" %}phd thesis{% elif entry.entry_type == "book" %}book{% elif entry.entry_type == "incollection" %}chapter{% else %}article{% endif -%}
+  {%- if entry.entry_type == "phdthesis" %}phd thesis{% elif entry.entry_type == "book" %}book{% elif entry.entry_type == "incollection" %}chapter{% elif entry.entry_type == "unpublished" %}paper{% else %}article{% endif -%}
 {%- endcomponent pub.kind %}
 
 {#- Full entry with collapsible abstract -#}
@@ -23,15 +24,16 @@
 {%- set who %}{{<pub.coauthors entry={e} />}}{% endset -%}
 <details class="pub" id="{{ e.citation_key }}">
   <summary>
-    <span class="year">{{ e.tags.year }}</span>
+    <span class="year">{{ e.tags.status | default(value=e.tags.year | default(value="")) }}</span>
     <span class="what">
       <span class="title">{{ e.tags.title }}</span>
-      <span class="meta">{{<pub.venue entry={e} />}}{% if who %} · <span class="who">{{ who }}</span>{% endif %}{% if e.tags.note %} · <em>{{ e.tags.note }}</em>{% endif %}</span>
+      <span class="meta">{{<pub.venue entry={e} />}}{% if e.tags.note %} · <em>{{ e.tags.note }}</em>{% endif %}{% if who %} <span class="who">({{ who }})</span>{% endif %}</span>
     </span>
   </summary>
   <div class="body">
     {%- if e.tags.abstract %}<p>{{ e.tags.abstract }}</p>{% endif %}
     <p class="actions">
+      {%- if e.tags.web %}<a href="{{ get_url(path='@/papers/' ~ e.tags.web ~ '.md') }}">read on this site →</a>{% endif %}
       {%- if url %}<a href="{{ url }}">{% if e.tags.doi %}doi:{{ e.tags.doi }}{% else %}link{% endif %}</a>{% endif %}
       {%- if e.tags.isbn %}<span>isbn {{ e.tags.isbn }}</span>{% endif %}
       <span class="kind">{{<pub.kind entry={e} />}}</span>
@@ -39,3 +41,12 @@
   </div>
 </details>
 {%- endcomponent pub.entry %}
+
+{#- "On this page": filled by js/outline.js from the page's section titles; hidden without JS -#}
+{% component site.outline() -%}
+<aside class="outline" aria-labelledby="outline-title" hidden>
+  <p class="outline-title" id="outline-title">On this page</p>
+  <ol></ol>
+</aside>
+<script src="{{ get_url(path='js/outline.js', cachebust=true) }}" defer></script>
+{%- endcomponent site.outline %}

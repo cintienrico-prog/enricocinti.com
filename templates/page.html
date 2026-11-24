@@ -1,10 +1,21 @@
 {% extends "base.html" %}
 
 {% block content %}
-<section class="panel">
-  <h1 class="panel-title">{{ page.title }}</h1>
+<h1 class="page-title">{{ page.title }}</h1>
+<section class="panel plain">
   {%- if page.slug == "about" and config.extra.photo %}
-  <img class="portrait" src="{{ get_url(path=config.extra.photo) }}" alt="Photo of {{ config.extra.name }}" width="180" height="180">
+  {#- Drawn in the palette's colours according to photo_style (see config.toml) -#}
+  <figure class="portrait photo-{{ config.extra.photo_style | default(value="greyscale") }}" tabindex="0">
+    {#- Gradient map: the photo's luminance picks a colour between --lo and --hi (set from the palette in base.html) -#}
+    <svg width="0" height="0" aria-hidden="true" focusable="false"><filter id="photo-tint" x="0" y="0" width="1" height="1" color-interpolation-filters="sRGB">
+      <feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  .2126 .7152 .0722 0 0" result="g"/>
+      <feComponentTransfer in="g" result="inv"><feFuncA type="table" tableValues="1 0"/></feComponentTransfer>
+      <feFlood class="hi"/><feComposite in2="g" operator="in" result="a"/>
+      <feFlood class="lo"/><feComposite in2="inv" operator="in" result="b"/>
+      <feComposite in="a" in2="b" operator="arithmetic" k2="1" k3="1"/>
+    </filter></svg>
+    <div class="frame"><img src="{{ get_url(path=config.extra.photo) }}" alt="Photo of {{ config.extra.name }}" width="176" height="176" loading="lazy"></div>
+  </figure>
   {%- endif %}
   <div class="prose">{{ page.content | safe }}</div>
 </section>

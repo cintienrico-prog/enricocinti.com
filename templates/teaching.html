@@ -1,17 +1,43 @@
 {% extends "base.html" %}
 
 {% block content %}
-{%- set t = load_data(path="data/teaching.toml") -%}
-<section class="panel">
-  <h1 class="panel-title">teaching</h1>
-  <ul class="list">
-  {%- for c in t.course %}
+{#- Both lists come from MyCV's data/ folder (copied in by flake.nix), shared with the CV.
+    teaching.csv:    year, title, hours, kind, institution, note
+    supervision.csv: year, student, work, title, programme, institution, role -#}
+{%- set t = load_data(path="data/teaching.csv", format="csv") -%}
+<div class="doc">
+<div class="doc-body">
+<h1 class="page-title">Teaching</h1>
+
+<section class="panel" id="courses">
+  <h2 class="panel-title">courses</h2>
+  <ul class="list frame">
+  {%- for c in t.records %}
     <li>
-      <span class="year">{{ c.year }}</span>
-      <span>{{ c.title }}
-        <span class="meta">{{ c.level }}{% if c.hours %}, {{ c.hours }} hrs{% endif %} · {{ c.institution }}{% if c.note %} · {{ c.note }}{% endif %}</span></span>
+      <span class="year">{{ c[0] }}</span>
+      <span>{{ c[1] }}
+        <span class="meta">{{ c[3] }}{% if c[2] %}, {{ c[2] }} hrs{% endif %} · {{ c[4] }}{% if c[5] %} · {{ c[5] }}{% endif %}</span></span>
     </li>
   {%- endfor %}
   </ul>
 </section>
+
+{%- set s = load_data(path="data/supervision.csv", format="csv") %}
+{%- if s.records | length > 0 %}
+<section class="panel" id="supervision">
+  <h2 class="panel-title">thesis supervision</h2>
+  <ul class="list frame">
+  {%- for r in s.records %}
+    <li>
+      <span class="year">{{ r[0] }}</span>
+      <span>{{ r[1] }}
+        <span class="meta">{{ r[2] }}, {{ r[4] }} · {{ r[5] }}{% if r[6] %} · {{ r[6] }}{% endif %}</span></span>
+    </li>
+  {%- endfor %}
+  </ul>
+</section>
+{%- endif %}
+</div>
+{{<site.outline />}}
+</div>
 {% endblock content %}

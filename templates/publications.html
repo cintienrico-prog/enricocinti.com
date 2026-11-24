@@ -2,22 +2,47 @@
 
 {% block content %}
 {%- set bib = load_data(path="data/publications.bib", format="bibtex") -%}
-{%- set pubs = bib.bibliographies | sort(attribute="tags.year") | reverse -%}
+{#- Entries with a `status` field (under contract, submitted, in preparation…)
+    are not published yet: they get their own section, status in place of the year. -#}
+{%- set wip = [p for p in bib.bibliographies if (p.tags.status | default(value="")) != ""] -%}
+{%- set pubs = [p for p in bib.bibliographies if (p.tags.status | default(value="")) == ""] | sort(attribute="tags.year") | reverse -%}
 
-<section class="panel">
-  <h1 class="panel-title">articles &amp; chapters</h1>
-  <div class="prose muted">{{ page.content | safe }}</div>
+<div class="doc">
+<div class="doc-body">
+<h1 class="page-title">Publications</h1>
+<div class="intro">{{ page.content | safe }}</div>
+
+<section class="panel" id="articles">
+  <h2 class="panel-title">articles &amp; chapters</h2>
+  <div class="frame">
   {%- for e in pubs %}{% if e.entry_type == "article" or e.entry_type == "incollection" %}
   {{<pub.entry e={e} />}}
   {%- endif %}{% endfor %}
+  </div>
 </section>
 
-<section class="panel">
+<section class="panel" id="books">
   <h2 class="panel-title">books &amp; thesis</h2>
+  <div class="frame">
   {%- for e in pubs %}{% if e.entry_type == "book" or e.entry_type == "phdthesis" %}
   {{<pub.entry e={e} />}}
   {%- endif %}{% endfor %}
+  </div>
 </section>
+
+{%- if wip | length > 0 %}
+<section class="panel wip" id="forthcoming">
+  <h2 class="panel-title">forthcoming &amp; in progress</h2>
+  <div class="frame">
+  {%- for e in wip %}
+  {{<pub.entry e={e} />}}
+  {%- endfor %}
+  </div>
+</section>
+{%- endif %}
+</div>
+{{<site.outline />}}
+</div>
 {% endblock content %}
 
 {% block hints %}<kbd>j</kbd><kbd>k</kbd> move · <kbd>⏎</kbd> abstract · <kbd>h</kbd><kbd>a</kbd><kbd>p</kbd><kbd>t</kbd> navigate{% endblock hints %}

@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{#- A paper rendered from its LaTeX source (papers/README.md). The HTML pieces are made
+    by papers/render.sh at build time and copied to data/papers/<paper>/ by flake.nix;
+    metadata comes from the paper's entry in data/publications.bib (page.extra.bib),
+    or from page.extra for a paper without one. -#}
+{% block content %}
+{%- set key = page.extra.paper -%}
+{%- set dir = "data/papers/" ~ key -%}
+{#- required=false: a page whose paper has not been rendered yet (a local draft before
+    papers/render.sh has run) shows a note instead of breaking the whole build -#}
+{%- set body = load_data(path=dir ~ "/body.html", format="plain", required=false) -%}
+{%- set bib = load_data(path="data/publications.bib", format="bibtex") -%}
+{%- set found = [p for p in bib.bibliographies if p.citation_key == page.extra.bib | default(value="")] -%}
+{%- if found | length > 0 -%}
+  {%- set e = found[0] -%}
+  {%- set authors = e.tags.author | default(value="") | replace(from=" and ", to=", ") -%}
+  {%- set when = e.tags.status | default(value=e.tags.year | default(value="")) -%}
+  {%- set venue %}{{<pub.venue entry={e} />}}{% endset -%}
+  {%- set doi = e.tags.doi | default(value="") -%}
+{%- else -%}
+  {%- set authors = page.extra.authors | default(value="") -%}
+  {%- set when = page.extra.status | default(value=page.extra.year | default(value="")) -%}
+  {%- set venue = page.extra.venue | default(value="") -%}
+  {%- set doi = page.extra.doi | default(value="") -%}
+{%- endif %}
+<div class="doc paper">
+<article class="doc-body">
+  <p class="eyebrow">{% if when %}<span class="badge">{{ when }}</span>{% endif %}{% if venue %} — {{ venue }}{% endif %}</p>
+  <h1 class="page-title paper-title">{{ page.title }}</h1>
+  {%- if authors %}<p class="byline">{{ authors }}</p>{% endif %}
+  <p class="buttons">
+    {%- if page.extra.pdf | default(value=false) %}
+    <a class="btn primary" href="{{ get_url(path='papers/' ~ key ~ '.pdf') }}">PDF <span aria-hidden="true">↓</span></a>
+    {%- endif %}
+    {%- if doi %}
+    <a class="btn" href="https://doi.org/{{ doi }}">Journal version <span aria-hidden="true">↗</span></a>
+    {%- endif %}
+    <a class="btn" href="{{ get_url(path='@/publications.md') }}">All publications</a>
+  </p>
+
+  {%- if body %}
+  <section class="abstract frame">
+    <h2 class="abstract-title">Abstract</h2>
+    {{ load_data(path=dir ~ "/abstract.html", format="plain") | safe }}
+  </section>
+
+  <div class="paper-body">
+    {{ body | safe }}
+  </div>
+  {%- else %}
+  <p class="intro">Not rendered yet: run <code>papers/render.sh &lt;source&gt; {{ dir }}</code> (papers/README.md).</p>
+  {%- endif %}
+</article>
+<aside class="outline toc" aria-labelledby="outline-title">
+  <p class="outline-title" id="outline-title">Contents</p>
+  {%- if body %}{{ load_data(path=dir ~ "/toc.html", format="plain") | safe }}{% endif %}
+</aside>
+<script src="{{ get_url(path='js/outline.js', cachebust=true) }}" defer></script>
+</div>
+{% endblock content %}

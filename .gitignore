@@ -2,3 +2,13 @@
 /result
 /result-*
 /.direnv
+/static/cv.pdf
+/data/papers/
+/static/papers/
+# Papers tried locally before they are public (papers/README.md): never committed
+/papers/local/
+/content/papers/*.local.md
+# Shared with the CV: copied from MyCV's data/ by flake.nix (see MyCV data/README.md)
+/data/publications.bib
+/data/teaching.csv
+/data/supervision.csv

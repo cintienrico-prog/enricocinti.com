@@ -3,11 +3,11 @@
     "cv-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1795192932,
-        "narHash": "sha256-O5rZa0PGfHX69npV4G+3kmKWcP2sLXXjy27Tp/kddcE=",
+        "lastModified": 1795521618,
+        "narHash": "sha256-tXUeyW2DcMoMe8s2o56hKL1RcgZS4qMtEYa6NOPoDvw=",
         "owner": "cintienrico-prog",
         "repo": "MyCV",
-        "rev": "0cb40c22a1787af45a5c5b77c985c8fe7ec4bb14",
+        "rev": "36d7aff19b17dded2a3c71b616d4e95974d7c9a3",
         "type": "github"
       },
       "original": {

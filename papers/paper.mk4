@@ -1,0 +1,179 @@
+-- make4ht build file for the paper pages (papers/README.md).
+-- Runs LaTeX (tex4ht) and BibTeX or Biber, then reshapes tex4ht's HTML into the
+-- three pieces templates/paper.html loads, written to $PAPER_OUT:
+--   abstract.html  the abstract's paragraphs
+--   toc.html       a nested list of the numbered sections, linking to them
+--   body.html      everything after the abstract: sections, footnotes, references
+-- Title, authors and date are dropped: the page shows them from its own metadata.
+local domfilter = require "make4ht-domfilter"
+
+-- BibTeX for natbib papers, Biber for biblatex ones (which leave a .bcf behind),
+-- nothing for a paper without a bibliography
+Make:add("bibliography", function(par)
+  if mkutils.file_exists(par.input .. ".bcf") then return os.execute("biber " .. par.input) end
+  local aux = io.open(par.input .. ".aux")
+  local text = aux and aux:read("*a") or ""
+  if aux then aux:close() end
+  if text:find("\\bibdata") then return os.execute("bibtex " .. par.input) end
+  return 0
+end)
+Make:htlatex {}
+Make:bibliography {}
+Make:htlatex {}
+Make:htlatex {}
+
+local out = os.getenv("PAPER_OUT") or "."
+
+local function class_of(el) return el:get_attribute("class") or "" end
+
+local function write(name, nodes)
+  local f = assert(io.open(out .. "/" .. name, "w"))
+  for _, n in ipairs(nodes) do f:write(n:serialize(), "\n") end
+  f:close()
+end
+
+-- tex4ht marks fonts with classes like ec-lmri-12 (italic) or ec-lmbx-12 (bold);
+-- turn those into <em> and <strong>, and drop the font classes everywhere else.
+local function fonts(dom)
+  for _, el in ipairs(dom:query_selector("span")) do
+    local c = class_of(el)
+    if c:match("lmri") or c:match("lmti") or c:match("cmti") or c:match("lmsl") then
+      el._name = "em"; el._attr["class"] = nil
+    elseif c:match("lmbx") or c:match("cmbx") then
+      el._name = "strong"; el._attr["class"] = nil
+    elseif c:match("^ec%-") or c:match("^ts1%-") or c:match("^cm") then
+      el._attr["class"] = nil
+    end
+  end
+  return dom
+end
+
+-- Browsers draw MathML Core, which ignores mathvariant on <mstyle> (and anything but
+-- "normal" on <mi>): \mathcal{A} would show as a plain A. Use the Unicode
+-- mathematical letters instead, which every maths font has.
+local alphabets = {
+  script = { upper = 0x1D49C, lower = 0x1D4B6,
+    ex = { B = 0x212C, E = 0x2130, F = 0x2131, H = 0x210B, I = 0x2110, L = 0x2112,
+      M = 0x2133, R = 0x211B, e = 0x212F, g = 0x210A, o = 0x2134 } },
+  italic = { upper = 0x1D434, lower = 0x1D44E, ex = { h = 0x210E } },
+  ["bold-script"] = { upper = 0x1D4D0, lower = 0x1D4EA, ex = {} },
+  bold = { upper = 0x1D400, lower = 0x1D41A, digit = 0x1D7CE, ex = {} },
+  ["bold-italic"] = { upper = 0x1D468, lower = 0x1D482, ex = {} },
+  fraktur = { upper = 0x1D504, lower = 0x1D51E,
+    ex = { C = 0x212D, H = 0x210C, I = 0x2111, R = 0x211C, Z = 0x2128 } },
+  ["double-struck"] = { upper = 0x1D538, lower = 0x1D552, digit = 0x1D7D8,
+    ex = { C = 0x2102, H = 0x210D, N = 0x2115, P = 0x2119, Q = 0x211A, R = 0x211D, Z = 0x2124 } },
+  ["sans-serif"] = { upper = 0x1D5A0, lower = 0x1D5BA, digit = 0x1D7E2, ex = {} },
+  monospace = { upper = 0x1D670, lower = 0x1D68A, digit = 0x1D7F6, ex = {} },
+}
+
+local function restyle(text, a)
+  return (text:gsub("[%w]", function(ch)
+    if a.ex[ch] then return utf8.char(a.ex[ch]) end
+    local b = ch:byte()
+    if b >= 65 and b <= 90 then return utf8.char(a.upper + b - 65) end
+    if b >= 97 and b <= 122 then return utf8.char(a.lower + b - 97) end
+    if b >= 48 and b <= 57 and a.digit then return utf8.char(a.digit + b - 48) end
+    return ch
+  end))
+end
+
+local function apply_variant(node, a)
+  for _, child in ipairs(node:get_children()) do
+    if child:is_text() then
+      child._text = restyle(child._text, a)
+    elseif child:is_element() and child:get_element_name() ~= "mtext" then
+      apply_variant(child, a)
+    end
+  end
+end
+
+local function mathvariants(dom)
+  for _, el in ipairs(dom:query_selector("mstyle, mi")) do
+    local a = alphabets[el:get_attribute("mathvariant") or ""]
+    if a then
+      apply_variant(el, a)
+      el._attr["mathvariant"] = el:get_element_name() == "mi" and "normal" or nil
+    end
+  end
+  return dom
+end
+
+-- Headings: \section → h2, \subsection → h3, numbered like pandoc's output so the
+-- same CSS applies (.header-section-number), with the anchor's id on the heading.
+local levels = { sectionHead = "h2", likesectionHead = "h2", subsectionHead = "h3",
+  likesubsectionHead = "h3", subsubsectionHead = "h4", likesubsubsectionHead = "h4" }
+
+local function headings(dom)
+  local toc = {}
+  for _, el in ipairs(dom:query_selector("h3, h4, h5")) do
+    local level = levels[class_of(el)]
+    if level then
+      el._name = level
+      el._attr["class"] = nil
+      local number
+      for _, child in ipairs(el:get_children()) do
+        if child:is_element() then
+          local cc = class_of(child)
+          if cc == "titlemark" then
+            number = child:get_text():gsub("%s+$", "")
+            child._attr["class"] = "header-section-number"
+            child._children = { child:create_text_node(number) }
+          elseif child:get_element_name() == "a" and child:get_attribute("id") then
+            el:set_attribute("id", child:get_attribute("id"))
+            child:remove_node()
+          end
+        end
+      end
+      local title = el:get_text():gsub("^%s*" .. (number or ""):gsub("%p", "%%%0") .. "%s*", ""):gsub("%s+", " ")
+      table.insert(toc, { level = level, id = el:get_attribute("id"), number = number, title = title })
+    end
+  end
+  return toc
+end
+
+local function toc_html(toc)
+  local parts, open = { "<ul>" }, false
+  for _, t in ipairs(toc) do
+    if t.title ~= "Contents" and t.id then
+      local num = t.number and ('<span class="toc-section-number">' .. t.number .. "</span> ") or ""
+      local link = '<a href="#' .. t.id .. '">' .. num .. t.title .. "</a>"
+      if t.level == "h2" then
+        if open then table.insert(parts, "</ul></li>"); open = false
+        elseif #parts > 1 then table.insert(parts, "</li>") end
+        table.insert(parts, "<li>" .. link)
+      elseif t.level == "h3" then
+        if not open then table.insert(parts, "<ul>"); open = true end
+        table.insert(parts, "<li>" .. link .. "</li>")
+      end
+    end
+  end
+  table.insert(parts, open and "</ul></li></ul>" or (#parts > 1 and "</li></ul>" or "</ul>"))
+  return table.concat(parts, "\n")
+end
+
+local function split(dom)
+  local body = dom:query_selector("body")[1]
+  -- title block, the printed table of contents and its heading, the \thanks footnote
+  for _, sel in ipairs({ ".maketitle", ".tableofcontents" }) do
+    for _, el in ipairs(dom:query_selector(sel)) do el:remove_node() end
+  end
+  local toc = headings(dom)
+  for _, el in ipairs(dom:query_selector("h2")) do
+    if el:get_text():match("^%s*Contents%s*$") then el:remove_node() end
+  end
+  for _, el in ipairs(dom:query_selector(".footnotes p")) do
+    if el:query_selector(".thank-mark")[1] then el:remove_node() end
+  end
+  local abstract = {}
+  for _, el in ipairs(dom:query_selector("section.abstract")) do
+    for _, p in ipairs(el:query_selector("p")) do table.insert(abstract, p) end
+    el:remove_node()
+  end
+  write("abstract.html", abstract)
+  local f = assert(io.open(out .. "/toc.html", "w")); f:write(toc_html(toc), "\n"); f:close()
+  write("body.html", body:get_children())
+  return dom
+end
+
+Make:match("html$", domfilter { "joincharacters", fonts, mathvariants, split })

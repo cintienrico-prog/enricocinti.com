@@ -2,27 +2,39 @@
 
 {% block content %}
 {%- set bib = load_data(path="data/publications.bib", format="bibtex") -%}
-{%- set pubs = bib.bibliographies | sort(attribute="tags.year") | reverse -%}
+{%- set pubs = [p for p in bib.bibliographies if (p.tags.status | default(value="")) == ""] | sort(attribute="tags.year") | reverse -%}
 
-<section class="panel hero">
-  <h1 class="panel-title">{{ config.extra.name | lower }}<span class="cursor" aria-hidden="true">█</span></h1>
-  <p class="tagline">{{ config.extra.tagline }}</p>
-  <div class="prose">{{ section.content | safe }}</div>
-  <p class="prompt"><span aria-hidden="true">$</span> <a href="mailto:{{ config.extra.email }}">{{ config.extra.email }}</a></p>
+<section class="hero">
+  {%- if config.extra.badge %}
+  <p class="eyebrow"><span class="badge">{{ config.extra.badge }}</span>{% if config.extra.affiliation %} — {{ config.extra.affiliation }}{% endif %}</p>
+  {%- endif %}
+  <h1 class="display">{{ config.extra.name }}<span class="sub">{{ config.extra.tagline }}<span class="cursor" aria-hidden="true">_</span></span></h1>
+  <div class="hero-body">
+  <div>
+  <div class="lede">{{ section.content | safe }}</div>
+  <p class="buttons">
+    <a class="btn primary" href="{{ get_url(path='/publications/') }}">Publications <span aria-hidden="true">→</span></a>
+    <a class="btn" href="{{ get_url(path='/about/') }}">About &amp; CV</a>
+    <a class="btn" href="mailto:{{ config.extra.email }}">Email</a>
+  </p>
+  </div>
+  {% include "partials/penrose.html" %}
+  </div>
 </section>
 
 <section class="panel">
-  <h2 class="panel-title">recent</h2>
-  <ul class="list">
+  <h2 class="panel-title">recent articles</h2>
+  <ul class="list cards frame">
   {%- for e in [p for p in pubs if p.entry_type == "article"][:4] %}
     {%- set url %}{{<pub.link entry={e} />}}{% endset %}
     <li>
       <span class="year">{{ e.tags.year }}</span>
-      <span>{% if url %}<a href="{{ url }}">{{ e.tags.title }}</a>{% else %}{{ e.tags.title }}{% endif %}
-        <span class="meta">{{<pub.venue entry={e} />}}</span></span>
+      <span class="title">{{ e.tags.title }}</span>
+      <span class="meta">{{<pub.venue entry={e} />}}</span>
+      {%- if url %}<a class="go" href="{{ url }}">Read <span aria-hidden="true">→</span></a>{% endif %}
     </li>
   {%- endfor %}
   </ul>
-  <p class="more"><a href="{{ get_url(path='/publications/') }}">all publications →</a></p>
+  <p class="more"><a href="{{ get_url(path='/publications/') }}">All publications <span aria-hidden="true">→</span></a></p>
 </section>
 {% endblock content %}

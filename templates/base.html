@@ -18,14 +18,19 @@
   <link rel="canonical" href="{{ current_url | default(value=config.base_url) }}">
   {#- Palette variables: dark by default, light via media query (scheme = "auto"), or forced by scheme = "dark"/"light". -#}
   <style>
+  {#- The photo tint runs from --lo (dark pixels) to --hi (light pixels): background to
+      tone on a dark scheme, tone to background on a light one (--tone: see style.css). -#}
   :root{ {%- for k, v in (pal.light if scheme == "light" else pal.dark) %}--{{ k }}:{{ v }};{% endfor -%} }
+  {% if scheme == "light" %}.portrait{--lo:var(--tone);--hi:var(--bg)}{% else %}.portrait{--lo:var(--bg);--hi:var(--tone)}{% endif %}
   {%- if scheme == "auto" %}
-  @media (prefers-color-scheme: light){:root{ {%- for k, v in pal.light %}--{{ k }}:{{ v }};{% endfor -%} }}
+  @media (prefers-color-scheme: light){:root{ {%- for k, v in pal.light %}--{{ k }}:{{ v }};{% endfor -%} }.portrait{--lo:var(--tone);--hi:var(--bg)}}
   {%- endif %}
   </style>
-  {#- Favicon generated from the palette (a data URI cannot read CSS variables, so it uses the dark accent). -#}
+  {#- Favicon generated from the palette (a data URI cannot read CSS variables, so it uses the dark colours):
+      "ec" in JetBrains Mono Bold, traced to a path (a favicon cannot load the web font), over an accent bar. -#}
   {%- set fav = pal.dark -%}
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='{{ fav.bg | replace(from='#', to='%23') }}'/%3E%3Crect x='7' y='7' width='6' height='18' fill='{{ fav.accent | replace(from='#', to='%23') }}'/%3E%3Crect x='16' y='20' width='9' height='4' fill='{{ fav.fg | replace(from='#', to='%23') }}'/%3E%3C/svg%3E">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='{{ fav.bg | replace(from='#', to='%23') }}'/%3E%3Cpath d='M11.42 22.17Q10.23 22.17 9.34 21.71Q8.46 21.25 7.97 20.43Q7.49 19.6 7.49 18.5V16.15Q7.49 15.05 7.97 14.22Q8.46 13.4 9.34 12.94Q10.23 12.48 11.42 12.48Q12.59 12.48 13.47 12.94Q14.34 13.4 14.83 14.22Q15.31 15.05 15.31 16.15V17.84H9.55V18.5Q9.55 19.48 10.02 19.99Q10.5 20.49 11.43 20.49Q12.15 20.49 12.59 20.24Q13.03 19.99 13.15 19.52H15.24Q15 20.73 13.96 21.45Q12.91 22.17 11.42 22.17ZM13.25 16.64V16.13Q13.25 15.17 12.79 14.65Q12.33 14.13 11.42 14.13Q10.5 14.13 10.02 14.66Q9.55 15.18 9.55 16.15V16.51L13.41 16.48Z M20.65 22.17Q19.46 22.17 18.57 21.72Q17.68 21.27 17.18 20.44Q16.69 19.62 16.69 18.5V16.15Q16.69 15.01 17.18 14.2Q17.68 13.38 18.57 12.93Q19.46 12.48 20.65 12.48Q22.42 12.48 23.47 13.39Q24.53 14.3 24.58 15.86H22.45Q22.4 15.13 21.93 14.73Q21.47 14.33 20.65 14.33Q19.8 14.33 19.31 14.8Q18.82 15.27 18.82 16.13V18.5Q18.82 19.36 19.31 19.84Q19.8 20.32 20.65 20.32Q21.47 20.32 21.93 19.92Q22.4 19.52 22.45 18.79H24.58Q24.53 20.35 23.47 21.26Q22.42 22.17 20.65 22.17Z' fill='{{ fav.fg | replace(from='#', to='%23') }}'/%3E%3Crect x='6' y='25' width='20' height='2.5' fill='{{ fav.accent | replace(from='#', to='%23') }}'/%3E%3C/svg%3E">
+  <link rel="preload" href="{{ get_url(path='fonts/jetbrains-mono-latin-400-normal.woff2') }}" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="{{ get_url(path='style.css', cachebust=true) }}">
   <script src="{{ get_url(path='js/keys.js', cachebust=true) }}" defer></script>
 </head>
@@ -33,7 +38,7 @@
   <a class="skip" href="#main">skip to content</a>
 
   <header class="bar">
-    <a class="brand" href="{{ get_url(path='/') }}"><span class="block" aria-hidden="true">▌</span>{{ config.extra.name | lower }}</a>
+    <a class="brand" href="{{ get_url(path='/') }}"><svg class="mark" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1 L15 8 L8 15 L1 8 Z"/><path d="M8 1 V15"/></svg>{{ config.extra.name | lower }}</a>
     <nav aria-label="main">
       {%- for item in config.extra.nav %}
       {%- set active = current_path | default(value="") == item.path %}
@@ -47,6 +52,7 @@
   </main>
 
   <footer class="bar status">
+    <span class="copy">&lt;!-- {{ config.extra.name | lower }} © {{ now() | date(format="%Y") }} · built with zola &amp; nix --&gt;</span>
     <span class="hint" aria-hidden="true">{% block hints %}<kbd>h</kbd><kbd>a</kbd><kbd>p</kbd><kbd>t</kbd> navigate{% endblock hints %}</span>
     <span class="links">
       {%- for l in config.extra.links %}

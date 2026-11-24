@@ -1,0 +1,79 @@
+% A test document for the paper pages (papers/README.md). Not a real paper:
+% it exercises what papers usually contain, so changes to render.sh, the
+% template or the CSS can be checked against it.
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{natbib}
+\usepackage{hyperref}
+
+\newtheorem{definition}{Definition}
+\newtheorem{proposition}{Proposition}
+\newcommand{\Alg}{\mathcal{A}}
+\newcommand{\Hilb}{\mathcal{H}}
+
+\title{Rendering Test: A Paper as a Web Page}
+\author{Enrico Cinti}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This document is a fixture for the website's paper pages. It contains the
+pieces a philosophy of physics paper tends to have (numbered sections,
+inline and display mathematics, a definition and a proposition, footnotes,
+citations and a reference list) so that the conversion from LaTeX to HTML
+can be checked in one place.
+\end{abstract}
+
+\section{Introduction}
+
+Dualities relate theories that look very different but agree on all their
+physical content \citep{deharo2016}. A standard example is position--momentum
+duality in quantum mechanics, where the Fourier transform
+$\hat{f}(p) = \int e^{-ipx} f(x)\,dx$ maps one representation onto the
+other.\footnote{Footnotes are collected at the end of the page and linked
+both ways.} Whether such theories are equivalent is a philosophical question,
+not only a formal one \citep{butterfield2021}.
+
+\subsection{What the page should show}
+
+Sections are numbered as in the PDF, and the table of contents on the right
+follows the reader. Cross-references work too: see
+Section~\ref{sec:algebras} and Equation~\eqref{eq:commutant}.
+
+\section{Algebras of observables}
+\label{sec:algebras}
+
+Let $\Alg$ be a von Neumann algebra acting on a Hilbert space $\Hilb$. Its
+commutant is
+\begin{equation}
+  \Alg' = \{\, b \in B(\Hilb) : ab = ba \ \text{for all } a \in \Alg \,\},
+  \label{eq:commutant}
+\end{equation}
+and the bicommutant theorem says that $\Alg'' = \Alg$.
+
+\begin{definition}
+A state $\omega$ on $\Alg$ is \emph{faithful} if $\omega(a^*a) = 0$
+implies $a = 0$.
+\end{definition}
+
+\begin{proposition}
+If $\Omega \in \Hilb$ is cyclic and separating for $\Alg$, the vector state
+$\omega(a) = \langle \Omega, a\,\Omega \rangle$ is faithful.
+\end{proposition}
+
+Aligned equations render as well:
+\begin{align}
+  S &= \int d^4x \sqrt{-g}\,\Big( \frac{R - 2\Lambda}{16\pi G} + \mathcal{L}_m \Big), \\
+  G_{\mu\nu} + \Lambda g_{\mu\nu} &= 8\pi G\, T_{\mu\nu}.
+\end{align}
+
+\section{Conclusion}
+
+If this page reads well, so will the real ones.\footnote{And if it does not,
+the fix goes in \texttt{render.sh} or \texttt{paper.html}, not in the paper.}
+
+\bibliographystyle{plainnat}
+\bibliography{refs}
+\end{document}

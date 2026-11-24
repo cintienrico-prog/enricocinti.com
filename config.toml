@@ -16,19 +16,29 @@ external_links_no_referrer = true
 
 [extra]
 name = "Enrico Cinti"
-tagline = "philosopher of physics"
+tagline = "Philosopher of physics"
+# The small label above the name on the home page, and the text after it (both optional)
+badge = "UvA"
+affiliation = "ILLC & IoP"
 email = "cinti.enrico@gmail.com"
 
 # Colour palette, one of the names in data/palettes.toml:
 #   catppuccin  rose-pine  nord  tokyo-night  everforest  gruvbox
 #   kanagawa  dracula  solarized  one  ayu  terminal  monokai  github
-#   nightfox  material  zenburn  oxocarbon
-palette = "catppuccin"
+#   nightfox  material  zenburn  oxocarbon  void  ember  phosphor
+palette = "phosphor"
 # "auto" follows the visitor's system (dark/light); or force "dark" / "light".
 scheme = "auto"
 
-# Set to e.g. "img/photo.jpg" once you put a photo in static/img/.
-photo = ""
+# The about-page photo. Set photo = "" to hide it. `photo_style` picks how it is drawn, from the palette's colours:
+#   greyscale  black and white, between the background and text colours
+#   duotone    from the background colour to the accent colour
+#   plain      the photo as it is
+# With greyscale and duotone, hovering or focusing the photo shows it in colour.
+# Made from the original with ImageMagick:
+#   magick in.png -gravity north -crop 364x364+0+10 +repage -resize 440x -quality 82 static/img/photo.jpg
+photo = "img/photo.jpg"
+photo_style = "greyscale"
 
 # Links shown in the footer status bar. Order is display order.
 # Delete what you don't want; uncomment what you do.
@@ -37,8 +47,8 @@ links = [
   { name = "orcid",      url = "https://orcid.org/0000-0002-7055-6085" },
   { name = "arxiv",      url = "https://arxiv.org/a/cinti_e_1" },
   { name = "philpeople", url = "https://philpeople.org/profiles/enrico-cinti" },
-  # { name = "scholar",  url = "https://scholar.google.com/citations?user=XXXX" },
-  # { name = "github",   url = "https://github.com/XXXX" },
+  { name = "github",     url = "https://github.com/cintienrico-prog" },
+  { name = "scholar",    url = "https://scholar.google.com/citations?user=ioFSE6UAAAAJ" },
 ]
 
 # Top navigation. `key` is the keyboard shortcut.
