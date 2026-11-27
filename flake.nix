@@ -146,7 +146,7 @@
               palettes)
             ++ lib.optional (!(palettes ? ${configExtra.palette})) "config.toml: unknown palette \"${configExtra.palette}\""
             ++ lib.optional (!(builtins.elem (configExtra.scheme or "auto") [ "auto" "dark" "light" ])) "config.toml: scheme must be auto, dark or light"
-            ++ lib.optional (!(builtins.elem (configExtra.photo_style or "greyscale") [ "greyscale" "duotone" "plain" ])) "config.toml: photo_style must be greyscale, duotone or plain";
+            ++ lib.optional (!(builtins.elem (configExtra.photo_style or "greyscale") [ "greyscale" "duotone" "plain" ])) "config.toml: photo_style must be greyscale, duotone or plain"
             ++ lib.optional (!(builtins.elem (configExtra.section_marks or "section") [ "section" "markdown" ])) "config.toml: section_marks must be section or markdown";
         in
         {
