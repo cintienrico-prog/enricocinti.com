@@ -457,5 +457,12 @@ html { scroll-behavior: smooth; }
 .doc.paper { grid-template-columns: 220px minmax(0, 1fr); }
 .doc.paper > .outline { grid-column: 1; grid-row: 1; padding: 0 16px 0 0; border-left: 0; border-right: 1px solid var(--line); }
 .doc.paper > .doc-body { grid-column: 2; grid-row: 1; }
-.doc.paper > .outline a.active::before { left: auto; right: -19px; }
+.doc.paper > .outline { overflow-x: hidden; }
+.doc.paper > .outline a.active::before { left: auto; right: -16px; }
 @media (max-width: 860px) { .doc.paper { grid-template-columns: minmax(0, 1fr); } .doc.paper > .doc-body { grid-column: 1; } .doc.paper > .outline { display: none; } }
+
+/* section marks, config.toml [extra] section_marks: "section" (§1, §2 on panels) or
+   "markdown" (## on panels and paper sections, ### on subsections, like the # on page titles) */
+.marks-markdown .panel-title::before { content: "##\00a0"; color: var(--md); letter-spacing: 0; }
+.marks-markdown .paper-body h2::before { content: "##\00a0"; color: var(--md); }
+.marks-markdown .paper-body h3::before { content: "###\00a0"; color: var(--md); }

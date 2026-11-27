@@ -34,7 +34,7 @@
   <link rel="stylesheet" href="{{ get_url(path='style.css', cachebust=true) }}">
   <script src="{{ get_url(path='js/keys.js', cachebust=true) }}" defer></script>
 </head>
-<body>
+<body class="marks-{{ config.extra.section_marks | default(value="section") }}">
   <a class="skip" href="#main">skip to content</a>
 
   <header class="bar">

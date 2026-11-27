@@ -130,7 +130,7 @@
       # `nix flake check` (also run by CI before deploying):
       #   site      full build: templates, BibTeX parsing, teaching.toml, palette lookup, CV compile
       #   zola-check zola's internal link check, drafts included (external links skipped: no network in the sandbox)
-      #   palettes  structure and hex values of every palette; config.toml's palette, scheme and photo_style are valid
+      #   palettes  structure and hex values of every palette; config.toml's palette, scheme, photo_style and section_marks are valid
       checks = forAllSystems (pkgs:
         let
           b = build pkgs;
@@ -147,6 +147,7 @@
             ++ lib.optional (!(palettes ? ${configExtra.palette})) "config.toml: unknown palette \"${configExtra.palette}\""
             ++ lib.optional (!(builtins.elem (configExtra.scheme or "auto") [ "auto" "dark" "light" ])) "config.toml: scheme must be auto, dark or light"
             ++ lib.optional (!(builtins.elem (configExtra.photo_style or "greyscale") [ "greyscale" "duotone" "plain" ])) "config.toml: photo_style must be greyscale, duotone or plain";
+            ++ lib.optional (!(builtins.elem (configExtra.section_marks or "section") [ "section" "markdown" ])) "config.toml: section_marks must be section or markdown";
         in
         {
           site = b.site;
@@ -176,11 +177,14 @@
       # `mkSite null` is the same as packages.site.
       # stagitTheme: style.css, logo, favicon and font for the git pages on the VPS
       # and ndgTheme, one stylesheet for the docs
-      # there (~/nixos modules/docs.nix); both in the site's palette (themes/).
+      # there (~/nixos modules/docs.nix); baseTheme, the plain kit (palette, font,
+      # icons) for other pages, e.g. the assistant's web app. All in the site's
+      # palette (themes/).
       legacyPackages = forAllSystems (pkgs: {
         inherit (build pkgs) mkSite;
         stagitTheme = import ./themes/stagit.nix { inherit pkgs; root = ./.; };
         ndgTheme = import ./themes/ndg.nix { inherit pkgs; root = ./.; };
+        baseTheme = import ./themes/base.nix { inherit pkgs; root = ./.; };
       });
 
       devShells = forAllSystems (pkgs: {

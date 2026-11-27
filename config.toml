@@ -39,6 +39,9 @@ scheme = "auto"
 #   magick in.png -gravity north -crop 364x364+0+10 +repage -resize 440x -quality 82 static/img/photo.jpg
 photo = "img/photo.jpg"
 photo_style = "greyscale"
+# Section marks: "section" (§1, §2 before each section) or "markdown" (## before
+# sections, ### before paper subsections, matching the # before page titles).
+section_marks = "markdown"
 
 # Links shown in the footer status bar. Order is display order.
 # Delete what you don't want; uncomment what you do.
